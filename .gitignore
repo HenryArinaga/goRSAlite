@@ -1,0 +1,7 @@
+# Go build files
+bin/
+*.exe
+*.out
+
+# macOS
+.DS_Store
