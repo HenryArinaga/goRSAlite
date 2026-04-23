@@ -45,6 +45,7 @@ func main() {
 		} else {
 			fmt.Printf("p: %d, q: %d \n", p, q)
 			fmt.Printf("Euler's Totient: %d \n", rsa.Totient(p, q))
+			fmt.Printf("Public Exponent e: %d \n", rsa.E(rsa.Totient(p, q)))
 		}
 
 	}
