@@ -22,7 +22,7 @@ func main() {
 	fmt.Println("Enter a number to factor:")
 	fmt.Scanln(&number_to_factor)
 	if message >= number_to_factor || message <= 0 {
-		fmt.Println("Message must satisfy 0 <= message < n for RSA encryption.")
+		fmt.Println("Message must satisfy 0 < message < n for RSA encryption.")
 		return
 	}
 
