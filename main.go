@@ -50,17 +50,21 @@ func main() {
 	} else {
 		p := factor_Result[0]
 		q := factor_Result[1]
+		totient := rsa.Totient(p, q)
+		e := rsa.E(totient)
+		d := rsa.D(e, totient)
 		if p == q {
 			fmt.Println("Both factors are the same, number is not a product of" +
 				"" + "two distinct primes, cannot compute RSA keys.")
 			return
 		} else {
+
 			fmt.Printf("p: %d, q: %d \n", p, q)
-			fmt.Printf("Euler's Totient: %d \n", rsa.Totient(p, q))
-			fmt.Printf("Public Exponent e: %d \n", rsa.E(rsa.Totient(p, q)))
-			fmt.Printf("Private Exponent d: %d \n", rsa.D(rsa.E(rsa.Totient(p, q)), rsa.Totient(p, q)))
-			fmt.Printf("Public Key: (%d, %d)\n", rsa.E(rsa.Totient(p, q)), p*q)
-			fmt.Printf("Private Key: (%d, %d)\n", rsa.D(rsa.E(rsa.Totient(p, q)), rsa.Totient(p, q)), p*q)
+			fmt.Printf("Euler's Totient: %d \n", totient)
+			fmt.Printf("Public Exponent e: %d \n", e)
+			fmt.Printf("Private Exponent d: %d \n", d)
+			fmt.Printf("Public Key: (%d, %d)\n", e, p*q)
+			fmt.Printf("Private Key: (%d, %d)\n", d, p*q)
 
 		}
 
