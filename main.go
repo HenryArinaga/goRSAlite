@@ -6,13 +6,25 @@ import (
 	"goRSAlite/rsa"
 )
 
-var n int
+var number_to_factor int
 var factor_method int
 
 func main() {
 
+	fmt.Println("RSA Key Generation and Factorization Tool")
+	fmt.Println("This program will factor a number and compute RSA keys based on the factors.")
+
+	fmt.Println("Enter a integer message to encrypt:")
+
+	var message int
+	fmt.Scanln(&message)
+
 	fmt.Println("Enter a number to factor:")
-	fmt.Scanln(&n)
+	fmt.Scanln(&number_to_factor)
+	if message >= number_to_factor || message <= 0 {
+		fmt.Println("Message must satisfy 0 <= message < n for RSA encryption.")
+		return
+	}
 
 	fmt.Println("Enter 1 for Trial Division, 2 for Sqrt Method:")
 	fmt.Scanln(&factor_method)
@@ -21,13 +33,13 @@ func main() {
 
 	switch factor_method {
 	case 1:
-		factor_Result = factorization.FactorTrialDivison(n)
+		factor_Result = factorization.FactorTrialDivison(number_to_factor)
 	case 2:
-		factor_Result = factorization.FactorSqrt(n)
+		factor_Result = factorization.FactorSqrt(number_to_factor)
 	default:
 		fmt.Println("Invalid method selected")
 	}
-	fmt.Printf("Factors of %d: %v \n", n, factor_Result)
+	fmt.Printf("Factors of %d: %v \n", number_to_factor, factor_Result)
 
 	if len(factor_Result) < 2 {
 		fmt.Println("Not enough factors to compute RSA keys.")
@@ -46,6 +58,10 @@ func main() {
 			fmt.Printf("p: %d, q: %d \n", p, q)
 			fmt.Printf("Euler's Totient: %d \n", rsa.Totient(p, q))
 			fmt.Printf("Public Exponent e: %d \n", rsa.E(rsa.Totient(p, q)))
+			fmt.Printf("Private Exponent d: %d \n", rsa.D(rsa.E(rsa.Totient(p, q)), rsa.Totient(p, q)))
+			fmt.Printf("Public Key: (%d, %d)\n", rsa.E(rsa.Totient(p, q)), p*q)
+			fmt.Printf("Private Key: (%d, %d)\n", rsa.D(rsa.E(rsa.Totient(p, q)), rsa.Totient(p, q)), p*q)
+
 		}
 
 	}

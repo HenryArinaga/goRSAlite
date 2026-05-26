@@ -11,8 +11,7 @@ func Totient(p int, q int) int {
 }
 
 /*
-	GCD computes the greatest common divisor
-
+GCD computes the greatest common divisor
 of two integers using the Euclidean algorithm.
 Here we are using recursion
 */
