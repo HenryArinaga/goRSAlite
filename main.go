@@ -1,32 +1,38 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"goRSAlite/factorization"
 	"goRSAlite/rsa"
+	"os"
 )
 
 var number_to_factor int
 var factor_method int
 
 func main() {
+	scanner := bufio.NewScanner(os.Stdin)
 
 	var factor_Result []int
 
 	fmt.Println("RSA Key Generation and Factorization Tool")
 	fmt.Println("This program will factor a number and compute RSA keys based on the factors.")
 
-	fmt.Println("Enter a integer message to encrypt:")
+	fmt.Println("Enter a message to encrypt:")
 
-	var message int
-	fmt.Scanln(&message)
+	var input string
+	scanner.Scan()
+	input = scanner.Text()
+	message := []byte(input)
 
 	fmt.Println("Enter a number to factor:")
 	fmt.Scanln(&number_to_factor)
-	if message >= number_to_factor || message <= 0 {
-		fmt.Println("Message must satisfy 0 < message < n for RSA encryption.")
-		return
-	}
+	//for _, b := range message {
+	//if int(b) >= number_to_factor || int(b) <= 0 {
+	//	fmt.Printf("Message byte %d must satisfy 0 < byte < n for RSA encryption.\n", b)
+	//	return
+	//}
 
 	fmt.Println("Enter 1 for Trial Division, 2 for Sqrt Method:")
 	fmt.Scanln(&factor_method)
@@ -43,12 +49,17 @@ func main() {
 	default:
 		fmt.Println("Invalid method selected")
 	}
-	rsa_message(factor_Result, message)
+
+	rsa_message(factor_Result, int(message[0]), input)
 
 }
 
-func rsa_message(factor_Result []int, message int) {
+//
 
+func rsa_message(factor_Result []int, message int, input string) {
+
+	var decrypted_message []int
+	var ciphertext []int
 	fmt.Printf("Factors of %d: %v \n", number_to_factor, factor_Result)
 
 	if len(factor_Result) < 2 {
@@ -75,10 +86,22 @@ func rsa_message(factor_Result []int, message int) {
 			fmt.Printf("Private Exponent d: %d \n", d)
 			fmt.Printf("Public Key: (%d, %d)\n", e, p*q)
 			fmt.Printf("Private Key: (%d, %d)\n", d, p*q)
-			ciphertext := rsa.Encrypt(message, e, p*q)
-			fmt.Printf("Ciphertext: %d \n", ciphertext)
-			decrypted_message := rsa.Decrypt(ciphertext, d, p*q)
-			fmt.Printf("Decrypted Message: %d \n", decrypted_message)
+
+			for i := 0; i < len(input); i++ {
+				ciphertext = append(ciphertext, rsa.Encrypt(int(input[i]), e, p*q))
+			}
+			fmt.Printf("Number of encrypted bytes: %d\n", len(ciphertext))
+			fmt.Printf("Ciphertext: %v \n", ciphertext)
+
+			for i := 0; i < len(ciphertext); i++ {
+				decrypted_message = append(decrypted_message, rsa.Decrypt(ciphertext[i], d, p*q))
+			}
+			fmt.Printf("Number of decrypted bytes: %d\n", len(decrypted_message))
+			fmt.Printf("Decrypted Message: ")
+			for i := 0; i < len(decrypted_message); i++ {
+				fmt.Printf("%c", decrypted_message[i])
+			}
+
 		}
 
 	}
