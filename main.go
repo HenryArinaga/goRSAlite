@@ -11,6 +11,8 @@ var factor_method int
 
 func main() {
 
+	var factor_Result []int
+
 	fmt.Println("RSA Key Generation and Factorization Tool")
 	fmt.Println("This program will factor a number and compute RSA keys based on the factors.")
 
@@ -28,8 +30,10 @@ func main() {
 
 	fmt.Println("Enter 1 for Trial Division, 2 for Sqrt Method:")
 	fmt.Scanln(&factor_method)
-
-	var factor_Result []int
+	if factor_method != 1 && factor_method != 2 {
+		fmt.Println("Invalid method selected, please enter 1 or 2.")
+		return
+	}
 
 	switch factor_method {
 	case 1:
@@ -39,10 +43,17 @@ func main() {
 	default:
 		fmt.Println("Invalid method selected")
 	}
+	rsa_message(factor_Result)
+
+}
+
+func rsa_message(factor_Result []int) {
+
 	fmt.Printf("Factors of %d: %v \n", number_to_factor, factor_Result)
 
 	if len(factor_Result) < 2 {
 		fmt.Println("Not enough factors to compute RSA keys.")
+
 		return
 	} else if len(factor_Result) > 2 {
 		fmt.Println("Number is not a product of two primes, cannot compute RSA keys.")
@@ -58,14 +69,12 @@ func main() {
 				"" + "two distinct primes, cannot compute RSA keys.")
 			return
 		} else {
-
 			fmt.Printf("p: %d, q: %d \n", p, q)
 			fmt.Printf("Euler's Totient: %d \n", totient)
 			fmt.Printf("Public Exponent e: %d \n", e)
 			fmt.Printf("Private Exponent d: %d \n", d)
 			fmt.Printf("Public Key: (%d, %d)\n", e, p*q)
 			fmt.Printf("Private Key: (%d, %d)\n", d, p*q)
-
 		}
 
 	}
