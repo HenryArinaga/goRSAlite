@@ -43,11 +43,11 @@ func main() {
 	default:
 		fmt.Println("Invalid method selected")
 	}
-	rsa_message(factor_Result)
+	rsa_message(factor_Result, message)
 
 }
 
-func rsa_message(factor_Result []int) {
+func rsa_message(factor_Result []int, message int) {
 
 	fmt.Printf("Factors of %d: %v \n", number_to_factor, factor_Result)
 
@@ -75,6 +75,10 @@ func rsa_message(factor_Result []int) {
 			fmt.Printf("Private Exponent d: %d \n", d)
 			fmt.Printf("Public Key: (%d, %d)\n", e, p*q)
 			fmt.Printf("Private Key: (%d, %d)\n", d, p*q)
+			ciphertext := rsa.Encrypt(message, e, p*q)
+			fmt.Printf("Ciphertext: %d \n", ciphertext)
+			decrypted_message := rsa.Decrypt(ciphertext, d, p*q)
+			fmt.Printf("Decrypted Message: %d \n", decrypted_message)
 		}
 
 	}
