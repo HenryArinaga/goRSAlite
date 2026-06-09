@@ -1,5 +1,7 @@
 package factorization
 
+import "math"
+
 func FactorTrialDivison(number_to_factor int) []int {
 
 	factor_array := make([]int, 0)
@@ -24,13 +26,28 @@ func FactorSqrt(number_to_factor int) []int {
 	return factor_array
 }
 
-/*func FactorFermant(n int) []int {
+func FactorFermant(number_to_factor int) []int {
 
-	factor_array := make ([]int, 0)
+	factor_array := make([]int, 0)
 
-	for i := 1; i < n; i++ {
+	a := int(math.Ceil(math.Sqrt(float64(number_to_factor))))
+	var bSquared int
+
+	for {
+
+		bSquared = a*a - number_to_factor
+		if bSquared < 0 {
+			continue
+		}
+		sqrt_b := math.Sqrt(float64(bSquared))
+		if sqrt_b == float64(int(sqrt_b)) {
+			factor_array = append(factor_array, a-int(sqrt_b))
+			factor_array = append(factor_array, a+int(sqrt_b))
+			break
+		}
+		a = a + 1
 
 	}
 
-
-} */
+	return factor_array
+}

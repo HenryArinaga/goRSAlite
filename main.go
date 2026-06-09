@@ -37,10 +37,10 @@ func main() {
 		}
 	}
 
-	fmt.Println("Enter 1 for Trial Division, 2 for Sqrt Method:")
+	fmt.Println("Enter 1 for Trial Division, 2 for Sqrt Method, 3 for Fermat's Method:")
 	fmt.Scanln(&factor_method)
-	if factor_method != 1 && factor_method != 2 {
-		fmt.Println("Invalid method selected, please enter 1 or 2.")
+	if factor_method != 1 && factor_method != 2 && factor_method != 3 {
+		fmt.Println("Invalid method selected, please enter 1, 2, or 3.")
 		return
 	}
 
@@ -54,17 +54,19 @@ func main() {
 	default:
 		fmt.Println("Invalid method selected")
 	}
-	start := time.Now()
+
 	rsa_message(factor_Result, int(message[0]), input)
-	duration := time.Since(start)
-	fmt.Printf("\nExecution time: %s\n", duration)
+
 }
 
 func rsa_message(factor_Result []int, message int, input string) {
 
 	var decrypted_message []int
 	var ciphertext []int
+	start := time.Now()
 	fmt.Printf("Factors of %d: %v \n", number_to_factor, factor_Result)
+	duration := time.Since(start)
+	fmt.Printf("\nTime to find Factors: %s\n", duration)
 
 	if len(factor_Result) < 2 {
 		fmt.Println("Not enough factors to compute RSA keys.")
@@ -73,39 +75,51 @@ func rsa_message(factor_Result []int, message int, input string) {
 		fmt.Println("Number is not a product of two primes, cannot compute RSA keys.")
 		return
 	} else {
-		p := factor_Result[0]
-		q := factor_Result[1]
-		totient := rsa.Totient(p, q)
-		e := rsa.E(totient)
-		d := rsa.D(e, totient)
-		if p == q {
-			fmt.Println("Both factors are the same, number is not a product of" +
-				"" + "two distinct primes, cannot compute RSA keys.")
-			return
-		} else {
-			fmt.Printf("p: %d, q: %d \n", p, q)
-			fmt.Printf("Euler's Totient: %d \n", totient)
-			fmt.Printf("Public Exponent e: %d \n", e)
-			fmt.Printf("Private Exponent d: %d \n", d)
-			fmt.Printf("Public Key: (%d, %d)\n", e, p*q)
-			fmt.Printf("Private Key: (%d, %d)\n", d, p*q)
+		fmt.Println("Enter 1 to compute RSA keys and encrypt the message, 2 to skip:")
+		var calculate_rsa int
+		fmt.Scanln(&calculate_rsa)
+		switch calculate_rsa {
+		case 1:
+			start := time.Now()
+			p := factor_Result[0]
+			q := factor_Result[1]
+			totient := rsa.Totient(p, q)
+			e := rsa.E(totient)
+			d := rsa.D(e, totient)
+			if p == q {
+				fmt.Println("Both factors are the same, number is not a product of" +
+					"" + "two distinct primes, cannot compute RSA keys.")
+				return
+			} else {
+				fmt.Printf("p: %d, q: %d \n", p, q)
+				fmt.Printf("Euler's Totient: %d \n", totient)
+				fmt.Printf("Public Exponent e: %d \n", e)
+				fmt.Printf("Private Exponent d: %d \n", d)
+				fmt.Printf("Public Key: (%d, %d)\n", e, p*q)
+				fmt.Printf("Private Key: (%d, %d)\n", d, p*q)
 
-			for i := 0; i < len(input); i++ {
-				ciphertext = append(ciphertext, rsa.Encrypt(int(input[i]), e, p*q))
-			}
-			fmt.Printf("Number of encrypted bytes: %d\n", len(ciphertext))
-			fmt.Printf("Ciphertext: %v \n", ciphertext)
+				for i := 0; i < len(input); i++ {
+					ciphertext = append(ciphertext, rsa.Encrypt(int(input[i]), e, p*q))
+				}
+				fmt.Printf("Number of encrypted bytes: %d\n", len(ciphertext))
+				fmt.Printf("Ciphertext: %v \n", ciphertext)
 
-			for i := 0; i < len(ciphertext); i++ {
-				decrypted_message = append(decrypted_message, rsa.Decrypt(ciphertext[i], d, p*q))
-			}
-			fmt.Printf("Number of decrypted bytes: %d\n", len(decrypted_message))
-			fmt.Printf("Decrypted Message: ")
-			for i := 0; i < len(decrypted_message); i++ {
-				fmt.Printf("%c", decrypted_message[i])
-			}
+				for i := 0; i < len(ciphertext); i++ {
+					decrypted_message = append(decrypted_message, rsa.Decrypt(ciphertext[i], d, p*q))
+				}
+				fmt.Printf("Number of decrypted bytes: %d\n", len(decrypted_message))
+				fmt.Printf("Decrypted Message: ")
+				for i := 0; i < len(decrypted_message); i++ {
+					fmt.Printf("%c", decrypted_message[i])
+				}
 
+			}
+			duration := time.Since(start)
+			fmt.Printf("\nExecution time: %s\n", duration)
+		case 2:
+			fmt.Println("RSA key generation and encryption skipped.")
+		default:
+			fmt.Println("Invalid option selected, skipping RSA key generation and encryption.")
 		}
-
 	}
 }
