@@ -6,6 +6,7 @@ import (
 	"goRSAlite/factorization"
 	"goRSAlite/rsa"
 	"os"
+	"time"
 )
 
 var number_to_factor int
@@ -26,13 +27,15 @@ func main() {
 	input = scanner.Text()
 	message := []byte(input)
 
-	fmt.Println("Enter a number to factor:")
+	fmt.Println("Enter a number to use as a RSA factor:")
 	fmt.Scanln(&number_to_factor)
-	//for _, b := range message {
-	//if int(b) >= number_to_factor || int(b) <= 0 {
-	//	fmt.Printf("Message byte %d must satisfy 0 < byte < n for RSA encryption.\n", b)
-	//	return
-	//}
+
+	for i := 0; i < len(message); i++ {
+		if int(message[i]) >= number_to_factor || int(message[i]) <= 0 {
+			fmt.Printf("Message byte %d must satisfy 0 < byte < n for RSA encryption.\n", message[i])
+			return
+		}
+	}
 
 	fmt.Println("Enter 1 for Trial Division, 2 for Sqrt Method:")
 	fmt.Scanln(&factor_method)
@@ -46,15 +49,16 @@ func main() {
 		factor_Result = factorization.FactorTrialDivison(number_to_factor)
 	case 2:
 		factor_Result = factorization.FactorSqrt(number_to_factor)
+	case 3:
+		factor_Result = factorization.FactorFermant(number_to_factor)
 	default:
 		fmt.Println("Invalid method selected")
 	}
-
+	start := time.Now()
 	rsa_message(factor_Result, int(message[0]), input)
-
+	duration := time.Since(start)
+	fmt.Printf("\nExecution time: %s\n", duration)
 }
-
-//
 
 func rsa_message(factor_Result []int, message int, input string) {
 
@@ -64,7 +68,6 @@ func rsa_message(factor_Result []int, message int, input string) {
 
 	if len(factor_Result) < 2 {
 		fmt.Println("Not enough factors to compute RSA keys.")
-
 		return
 	} else if len(factor_Result) > 2 {
 		fmt.Println("Number is not a product of two primes, cannot compute RSA keys.")
