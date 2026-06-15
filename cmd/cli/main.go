@@ -3,8 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"goRSAlite/factorization"
-	"goRSAlite/rsa"
+	"goRSAlite/internal/factorization"
+	"goRSAlite/internal/rsa"
 	"os"
 	"time"
 )
