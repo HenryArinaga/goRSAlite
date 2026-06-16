@@ -14,20 +14,41 @@ import (
 
 func main() {
 	a := app.New()
-	w := a.NewWindow("Hello World")
-	text1 := canvas.NewText("menu 1", color.White)
-	text2 := canvas.NewText("menu 2", color.White)
-
-	w.SetContent(widget.NewLabel("Hello World!"))
-	w.Resize(fyne.NewSize(1200, 800))
+	w := a.NewWindow("GO RSA Lite")
 
 	HomeButton := widget.NewButton("Home", func() {
 		log.Println("tapped")
 	})
+	MethodsButton := widget.NewButton("Methods", func() {
+		log.Println("Methods tapped")
+	})
+	SettingsButton := widget.NewButton("Settings", func() {
+		log.Println("Settings tapped")
+	})
+	LogsButton := widget.NewButton("Logs", func() {
+		log.Println("Logs tapped")
+	})
 
-	leftBox := container.New(layout.NewVBoxLayout(), text1, text2, HomeButton)
+	w.Resize(fyne.NewSize(1200, 800))
 
-	w.SetContent(container.New(layout.NewHBoxLayout(), leftBox, HomeButton))
+	leftSidebar := container.NewVBox(
+		HomeButton,
+		MethodsButton,
+		SettingsButton,
+		LogsButton,
+	)
+
+	centerTop := container.New(layout.NewCenterLayout(), canvas.NewText("Welcome to the RSA Factorization Tool!", color.White))
+
+	rightTop := container.New(layout.NewHBoxLayout(), widget.NewLabel("Right Top"))
+
+	topBar := container.NewBorder(nil, nil, nil, rightTop, centerTop)
+
+	centerContent := container.New(layout.NewCenterLayout(), canvas.NewText("Welcome to the RSA Factorization Tool!", color.White))
+
+	outsideBorder := container.NewBorder(topBar, nil, leftSidebar, nil, centerContent)
+
+	w.SetContent(outsideBorder)
 
 	w.ShowAndRun()
 
