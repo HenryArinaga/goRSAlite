@@ -23,7 +23,7 @@ func main() {
 
 	topBar := container.NewBorder(nil, nil, nil, rightTop, centerTop)
 
-	centerContent := container.New(layout.NewCenterLayout(), screens.HomeScreen())
+	centerContent := container.New(layout.NewMaxLayout(), screens.HomeScreen())
 
 	HomeButton := widget.NewButton("Home", func() {
 		log.Println("tapped")
