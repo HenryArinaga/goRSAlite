@@ -12,7 +12,10 @@ import (
 
 func HomeScreen() fyne.CanvasObject {
 
-	titleLabel := container.New(layout.NewVBoxLayout(), widget.NewLabel("Prime Factorization"))
+	titleLabel := container.New(
+		layout.NewVBoxLayout(),
+		widget.NewLabel("Prime Factorization"),
+	)
 
 	gutter := canvas.NewRectangle(color.Transparent)
 	gutter.SetMinSize(fyne.NewSize(200, 0))
@@ -31,6 +34,7 @@ func HomeScreen() fyne.CanvasObject {
 	//pass buttons to rectangle container so it sits on top of the rectangle
 	rectangle1 := canvas.NewRectangle(color.Black)
 	rectangle1.SetMinSize(fyne.NewSize(500, 100))
+
 	rectangle1Content := container.NewPadded(
 		container.NewVBox(
 			widget.NewLabel("Enter Number"),
@@ -43,8 +47,43 @@ func HomeScreen() fyne.CanvasObject {
 		rectangle1,
 		rectangle1Content,
 	)
-	centeringContainer := container.New(layout.NewCenterLayout(), panel)
-	insideWrapper := container.New(layout.NewVBoxLayout(), container.NewPadded(), page, centeringContainer)
+
+	rectangle2 := canvas.NewRectangle(color.Black)
+	rectangle2.SetMinSize(fyne.NewSize(800, 400))
+
+	rectangle2Content := container.NewPadded(
+		container.NewVBox(
+			widget.NewLabel("Results"),
+		),
+	)
+
+	outputPanel := container.NewStack(
+		rectangle2,
+		rectangle2Content,
+	)
+
+	gap := canvas.NewRectangle(color.Transparent)
+	gap.SetMinSize(fyne.NewSize(0, 16))
+
+	verticalContainer := container.New(
+		layout.NewVBoxLayout(),
+		page,
+		panel,
+		gap,
+		outputPanel,
+	)
+
+	centeringContainer := container.New(
+		layout.NewCenterLayout(),
+		container.NewPadded(),
+		verticalContainer,
+	)
+
+	insideWrapper := container.New(
+		layout.NewVBoxLayout(),
+		container.NewPadded(),
+		centeringContainer,
+	)
 
 	return insideWrapper
 }
