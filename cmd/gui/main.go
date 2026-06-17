@@ -10,6 +10,7 @@ import (
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -23,9 +24,9 @@ func main() {
 
 	topBar := container.NewBorder(nil, nil, nil, rightTop, centerTop)
 
-	centerContent := container.New(layout.NewMaxLayout(), screens.HomeScreen())
+	centerContent := container.New(layout.NewStackLayout(), screens.HomeScreen())
 
-	HomeButton := widget.NewButton("Home", func() {
+	HomeButton := widget.NewButtonWithIcon("Home", theme.HomeIcon(), func() {
 		log.Println("tapped")
 		centerContent.Objects = []fyne.CanvasObject{screens.HomeScreen()}
 		centerContent.Refresh()
