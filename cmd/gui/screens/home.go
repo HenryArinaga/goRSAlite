@@ -1,7 +1,11 @@
 package screens
 
 import (
+	"fmt"
 	"image/color"
+
+	"goRSAlite/internal/factorization"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -12,6 +16,7 @@ import (
 
 func HomeScreen() fyne.CanvasObject {
 
+	entry := widget.NewEntry()
 	titleLabel := container.New(
 		layout.NewVBoxLayout(),
 		widget.NewLabel("Prime Factorization"),
@@ -24,11 +29,25 @@ func HomeScreen() fyne.CanvasObject {
 		gutter,
 		titleLabel,
 	)
+
+	resultLabel := widget.NewLabel("The Factors are: ")
+
 	// create the same buttons in the same container
 	factorButtons := container.NewHBox(
 		layout.NewSpacer(),
-		widget.NewButton("Factor", func() {}),
-		widget.NewButton("Clear", func() {}),
+		widget.NewButton("Factor", func() {
+			text := entry.Text
+			numberToFactor, err := strconv.Atoi(text)
+			if err != nil {
+				return
+			}
+			factorResult := factorization.FactorTrialDivision(numberToFactor)
+			resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
+			fmt.Println(factorResult)
+		}),
+		widget.NewButton("Clear", func() {
+			entry.SetText("")
+		}),
 	)
 
 	//pass buttons to rectangle container so it sits on top of the rectangle
@@ -38,7 +57,7 @@ func HomeScreen() fyne.CanvasObject {
 	rectangle1Content := container.NewPadded(
 		container.NewVBox(
 			widget.NewLabel("Enter Number"),
-			widget.NewEntry(),
+			entry,
 			factorButtons,
 		),
 	)
@@ -54,6 +73,8 @@ func HomeScreen() fyne.CanvasObject {
 	rectangle2Content := container.NewPadded(
 		container.NewVBox(
 			widget.NewLabel("Results"),
+			container.NewVBox(
+				resultLabel),
 		),
 	)
 

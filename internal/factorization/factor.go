@@ -2,7 +2,7 @@ package factorization
 
 import "math"
 
-func FactorTrialDivison(number_to_factor int) []int {
+func FactorTrialDivision(number_to_factor int) []int {
 
 	factor_array := make([]int, 0)
 	for i := 2; i <= number_to_factor; i++ {

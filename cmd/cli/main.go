@@ -46,7 +46,7 @@ func main() {
 
 	switch factor_method {
 	case 1:
-		factor_Result = factorization.FactorTrialDivison(number_to_factor)
+		factor_Result = factorization.FactorTrialDivision(number_to_factor)
 	case 2:
 		factor_Result = factorization.FactorSqrt(number_to_factor)
 	case 3:
