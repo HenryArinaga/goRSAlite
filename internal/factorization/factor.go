@@ -26,7 +26,7 @@ func FactorSqrt(number_to_factor int) []int {
 	return factor_array
 }
 
-func FactorFermant(number_to_factor int) []int {
+func FactorFermat(number_to_factor int) []int {
 
 	factor_array := make([]int, 0)
 

@@ -3,6 +3,7 @@ package screens
 import (
 	"fmt"
 	"image/color"
+	"log"
 
 	"goRSAlite/internal/factorization"
 	"strconv"
@@ -41,9 +42,42 @@ func HomeScreen() fyne.CanvasObject {
 			if err != nil {
 				return
 			}
-			factorResult := factorization.FactorTrialDivision(numberToFactor)
-			resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
-			fmt.Println(factorResult)
+
+			switch state.SelectedMethod {
+			case "Trial Division":
+				factorResult := factorization.FactorTrialDivision(numberToFactor)
+				resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
+				fmt.Println(factorResult)
+				log.Println("Current method:", state.SelectedMethod)
+			case "Square Root":
+				factorResult := factorization.FactorSqrt(numberToFactor)
+				resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
+				fmt.Println(factorResult)
+				log.Println("Current method:", state.SelectedMethod)
+			case "Fermat Factorization":
+				factorResult := factorization.FactorFermat(numberToFactor)
+				resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
+				fmt.Println(factorResult)
+				log.Println("Current method:", state.SelectedMethod)
+			default:
+				fmt.Println("Invalid method selected")
+			}
+			/*
+				if state.SelectedMethod == "Trial Division" {
+					factorResult := factorization.FactorTrialDivision(numberToFactor)
+					resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
+					fmt.Println(factorResult)
+				} else if state.SelectedMethod == "Square Root" {
+					factorResult := factorization.FactorSqrt(numberToFactor)
+					resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
+					fmt.Println(factorResult)
+				} else if state.SelectedMethod == "Fermat Factorization" {
+					factorResult := factorization.FactorSqrt(numberToFactor)
+					resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
+					fmt.Println(factorResult)
+				}
+			*/
+
 		}),
 		widget.NewButton("Clear", func() {
 			entry.SetText("")

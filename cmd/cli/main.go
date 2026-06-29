@@ -50,7 +50,7 @@ func main() {
 	case 2:
 		factor_Result = factorization.FactorSqrt(number_to_factor)
 	case 3:
-		factor_Result = factorization.FactorFermant(number_to_factor)
+		factor_Result = factorization.FactorFermat(number_to_factor)
 	default:
 		fmt.Println("Invalid method selected")
 	}
