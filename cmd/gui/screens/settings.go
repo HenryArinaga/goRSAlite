@@ -16,12 +16,19 @@ type MethodCard struct {
 	Label      *widget.Label
 	Selected   bool
 	widget.BaseWidget
+	cardList []*MethodCard
 }
 
 var selectedMethod string
 
 func (methodCardClicked *MethodCard) Tapped(eventInfo *fyne.PointEvent) {
 
+	for _, card := range methodCardClicked.cardList {
+		card.Selected = false
+		card.Rectangle.FillColor = color.Black
+		card.Refresh()
+
+	}
 	selectedMethod = methodCardClicked.MethodName
 	methodCardClicked.Selected = true
 	methodCardClicked.Rectangle.FillColor = color.RGBA{R: 80, G: 140, B: 255, A: 255}
@@ -76,6 +83,11 @@ func SettingsScreen() fyne.CanvasObject {
 		Label:      fermat,
 	}
 	card3.ExtendBaseWidget(&card3)
+
+	var cardList []*MethodCard = []*MethodCard{&card1, &card2, &card3}
+	card1.cardList = cardList
+	card2.cardList = cardList
+	card3.cardList = cardList
 
 	content1 := container.New(layout.NewStackLayout(), &card1)
 	content2 := container.New(layout.NewStackLayout(), &card2)
