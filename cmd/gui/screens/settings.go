@@ -89,6 +89,17 @@ func SettingsScreen() fyne.CanvasObject {
 	card2.cardList = cardList
 	card3.cardList = cardList
 
+	for _, v := range cardList {
+		if selectedMethod == v.MethodName {
+			v.Rectangle.FillColor = color.RGBA{R: 80, G: 140, B: 255, A: 255}
+			v.Selected = true
+		} else {
+			v.Rectangle.FillColor = color.Black
+			v.Selected = false
+		}
+
+	}
+
 	content1 := container.New(layout.NewStackLayout(), &card1)
 	content2 := container.New(layout.NewStackLayout(), &card2)
 	content3 := container.New(layout.NewStackLayout(), &card3)
