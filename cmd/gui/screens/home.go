@@ -43,22 +43,22 @@ func HomeScreen() fyne.CanvasObject {
 				return
 			}
 
-			switch state.SelectedMethod {
+			switch selectedMethod {
 			case "Trial Division":
 				factorResult := factorization.FactorTrialDivision(numberToFactor)
 				resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
 				log.Println(factorResult)
-				log.Println("Current method:", state.SelectedMethod)
+				log.Println("Current method:", selectedMethod)
 			case "Square Root":
 				factorResult := factorization.FactorSqrt(numberToFactor)
 				resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
 				log.Println(factorResult)
-				log.Println("Current method:", state.SelectedMethod)
+				log.Println("Current method:", selectedMethod)
 			case "Fermat Factorization":
 				factorResult := factorization.FactorFermat(numberToFactor)
 				resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
 				log.Println(factorResult)
-				log.Println("Current method:", state.SelectedMethod)
+				log.Println("Current method:", selectedMethod)
 			default:
 				fmt.Println("Invalid method selected")
 			}

@@ -33,7 +33,7 @@ func main() {
 	})
 	MethodsButton := widget.NewButton("Methods", func() {
 		log.Println("Methods tapped")
-		centerContent.Objects = []fyne.CanvasObject{screens.MethodsScreen()}
+		centerContent.Objects = []fyne.CanvasObject{screens.MethodScreen()}
 		centerContent.Refresh()
 	})
 	SettingsButton := widget.NewButton("Settings", func() {
