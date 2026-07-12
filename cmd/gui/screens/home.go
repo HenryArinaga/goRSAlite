@@ -11,11 +11,12 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 )
 
-func HomeScreen() fyne.CanvasObject {
+func HomeScreen(w fyne.Window) fyne.CanvasObject {
 
 	entry := widget.NewEntry()
 	titleLabel := container.New(
@@ -39,6 +40,9 @@ func HomeScreen() fyne.CanvasObject {
 		widget.NewButton("Factor", func() {
 			text := entry.Text
 			numberToFactor, err := strconv.Atoi(text)
+			if selectedMethod == "" {
+				dialog.ShowInformation("No Method Selected", "Pleaes selecte a Method", w)
+			}
 			if err != nil {
 				return
 			}

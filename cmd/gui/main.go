@@ -24,11 +24,11 @@ func main() {
 
 	topBar := container.NewBorder(nil, nil, nil, rightTop, centerTop)
 
-	centerContent := container.New(layout.NewStackLayout(), screens.HomeScreen())
+	centerContent := container.New(layout.NewStackLayout(), screens.HomeScreen(w))
 
 	HomeButton := widget.NewButtonWithIcon("Home", theme.HomeIcon(), func() {
 		log.Println("tapped")
-		centerContent.Objects = []fyne.CanvasObject{screens.HomeScreen()}
+		centerContent.Objects = []fyne.CanvasObject{screens.HomeScreen(w)}
 		centerContent.Refresh()
 	})
 	MethodsButton := widget.NewButton("Methods", func() {
