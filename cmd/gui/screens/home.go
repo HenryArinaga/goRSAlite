@@ -47,17 +47,17 @@ func HomeScreen() fyne.CanvasObject {
 
 			case "Trial Division":
 				factorResult := factorization.FactorTrialDivision(numberToFactor)
-				resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
+				resultLabel.SetText(fmt.Sprintf("Factors: %v \nMethod: Trial Division", factorResult))
 				log.Println(factorResult)
 				log.Println("Current method:", selectedMethod)
 			case "Square Root":
 				factorResult := factorization.FactorSqrt(numberToFactor)
-				resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
+				resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Square Root", factorResult))
 				log.Println(factorResult)
 				log.Println("Current method:", selectedMethod)
 			case "Fermat Factorization":
 				factorResult := factorization.FactorFermat(numberToFactor)
-				resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))
+				resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Fermat", factorResult))
 				log.Println(factorResult)
 				log.Println("Current method:", selectedMethod)
 			default:
