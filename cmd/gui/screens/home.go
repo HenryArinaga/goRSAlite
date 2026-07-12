@@ -44,6 +44,7 @@ func HomeScreen() fyne.CanvasObject {
 			}
 
 			switch selectedMethod {
+
 			case "Trial Division":
 				factorResult := factorization.FactorTrialDivision(numberToFactor)
 				resultLabel.SetText(fmt.Sprintf("Factors: %v", factorResult))

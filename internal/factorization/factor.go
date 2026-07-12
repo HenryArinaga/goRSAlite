@@ -1,8 +1,15 @@
 package factorization
 
-import "math"
+import (
+	"fmt"
+	"math"
+	"time"
+)
+
+var BenchmarkOn bool
 
 func FactorTrialDivision(number_to_factor int) []int {
+	start := time.Now()
 
 	factor_array := make([]int, 0)
 	for i := 2; i <= number_to_factor; i++ {
@@ -11,10 +18,16 @@ func FactorTrialDivision(number_to_factor int) []int {
 			number_to_factor = number_to_factor / i
 		}
 	}
+	if BenchmarkOn == true {
+		duration := time.Since(start)
+		fmt.Printf("\nTime to find Factors: %s\n", duration)
+	}
+
 	return factor_array
 }
 
 func FactorSqrt(number_to_factor int) []int {
+	start := time.Now()
 
 	factor_array := make([]int, 0)
 	for i := 2; i*i <= number_to_factor; i++ {
@@ -26,10 +39,15 @@ func FactorSqrt(number_to_factor int) []int {
 	if number_to_factor > 1 {
 		factor_array = append(factor_array, number_to_factor)
 	}
+	if BenchmarkOn == true {
+		duration := time.Since(start)
+		fmt.Printf("\nTime to find Factors: %s\n", duration)
+	}
 	return factor_array
 }
 
 func FactorFermat(number_to_factor int) []int {
+	start := time.Now()
 
 	factor_array := make([]int, 0)
 
@@ -65,6 +83,10 @@ func FactorFermat(number_to_factor int) []int {
 		}
 		a = a + 1
 
+	}
+	if BenchmarkOn == true {
+		duration := time.Since(start)
+		fmt.Printf("\nTime to find Factors: %s\n", duration)
 	}
 
 	return factor_array

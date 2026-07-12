@@ -3,6 +3,8 @@ package screens
 import (
 	"image/color"
 
+	"goRSAlite/internal/factorization"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
@@ -18,17 +20,22 @@ func SettingsScreen() fyne.CanvasObject {
 		})
 
 	benchmarkModeCheck := widget.NewCheck("Benchmark mode",
-		func(turnOnLightMode bool) {
+		func(turnOnBenchmarkMode bool) {
+			factorization.BenchmarkOn = turnOnBenchmarkMode
 
 		})
 
+	if factorization.BenchmarkOn == true {
+		benchmarkModeCheck.SetChecked(true)
+	}
+
 	sieveModeCheck := widget.NewCheck("Sieve mode (coming soon)",
-		func(turnOnLightMode bool) {
+		func(turnOnSieveMode bool) {
 
 		})
 
 	simdModeCheck := widget.NewCheck("SIMD Acceleration mode (coming soon)",
-		func(turnOnLightMode bool) {
+		func(turnOnSimdMode bool) {
 
 		})
 	recAppearance1 := canvas.NewRectangle(color.Black)

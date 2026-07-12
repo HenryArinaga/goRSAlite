@@ -21,6 +21,7 @@ type MethodCard struct {
 }
 
 var selectedMethod string
+var benchmark bool
 
 func (methodCardClicked *MethodCard) Tapped(eventInfo *fyne.PointEvent) {
 
