@@ -3,8 +3,6 @@ package screens
 import (
 	"image/color"
 
-	"goRSAlite/internal/factorization"
-
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
@@ -21,11 +19,11 @@ func SettingsScreen() fyne.CanvasObject {
 
 	benchmarkModeCheck := widget.NewCheck("Benchmark mode",
 		func(turnOnBenchmarkMode bool) {
-			factorization.BenchmarkOn = turnOnBenchmarkMode
+			BenchmarkOn = turnOnBenchmarkMode
 
 		})
 
-	if factorization.BenchmarkOn == true {
+	if BenchmarkOn == true {
 		benchmarkModeCheck.SetChecked(true)
 	}
 

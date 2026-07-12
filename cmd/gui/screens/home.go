@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"log"
+	"time"
 
 	"goRSAlite/internal/factorization"
 	"strconv"
@@ -15,6 +16,8 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 )
+
+var BenchmarkOn bool
 
 func HomeScreen(w fyne.Window) fyne.CanvasObject {
 
@@ -42,6 +45,7 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 			numberToFactor, err := strconv.Atoi(text)
 			if selectedMethod == "" {
 				dialog.ShowInformation("No Method Selected", "Pleaes selecte a Method", w)
+				return
 			}
 			if err != nil {
 				dialog.ShowInformation("Non-number characters entered", "Pleaes enter valid numbers", w)
@@ -49,20 +53,38 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 			}
 
 			switch selectedMethod {
-
 			case "Trial Division":
+				start := time.Now()
 				factorResult := factorization.FactorTrialDivision(numberToFactor)
-				resultLabel.SetText(fmt.Sprintf("Factors: %v \nMethod: Trial Division", factorResult))
+				duration := time.Since(start)
+				if BenchmarkOn == true {
+					resultLabel.SetText(fmt.Sprintf("Factors: %v \nMethod: Trial Division\nBenchmark Time: %v", factorResult, duration))
+					fmt.Printf("\nTime to find Factors: %s\n", duration)
+				} else {
+					resultLabel.SetText(fmt.Sprintf("Factors: %v \nMethod: Trial Division", factorResult))
+				}
 				log.Println(factorResult)
 				log.Println("Current method:", selectedMethod)
 			case "Square Root":
+				start := time.Now()
 				factorResult := factorization.FactorSqrt(numberToFactor)
-				resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Square Root", factorResult))
+				duration := time.Since(start)
+				if BenchmarkOn == true {
+					resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Square Root\nBenchmark Time: %v", factorResult, duration))
+				} else {
+					resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Square Root", factorResult))
+				}
 				log.Println(factorResult)
 				log.Println("Current method:", selectedMethod)
 			case "Fermat Factorization":
+				start := time.Now()
 				factorResult := factorization.FactorFermat(numberToFactor)
-				resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Fermat", factorResult))
+				duration := time.Since(start)
+				if BenchmarkOn == true {
+					resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Fermat\nBenchmark Time: %v", factorResult, duration))
+				} else {
+					resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Fermat", factorResult))
+				}
 				log.Println(factorResult)
 				log.Println("Current method:", selectedMethod)
 			default:
