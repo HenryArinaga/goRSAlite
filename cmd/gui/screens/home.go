@@ -44,6 +44,7 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 				dialog.ShowInformation("No Method Selected", "Pleaes selecte a Method", w)
 			}
 			if err != nil {
+				dialog.ShowInformation("Non-number characters entered", "Pleaes enter valid numbers", w)
 				return
 			}
 
