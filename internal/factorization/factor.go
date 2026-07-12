@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-func FactorTrialDivision(number_to_factor int) []int {
+func FactorTrialDivision(number_to_factor int, factorResult chan []int) {
 
 	factor_array := make([]int, 0)
 	for i := 2; i <= number_to_factor; i++ {
@@ -13,11 +13,10 @@ func FactorTrialDivision(number_to_factor int) []int {
 			number_to_factor = number_to_factor / i
 		}
 	}
-
-	return factor_array
+	factorResult <- factor_array
 }
 
-func FactorSqrt(number_to_factor int) []int {
+func FactorSqrt(number_to_factor int, factorResult chan []int) {
 
 	factor_array := make([]int, 0)
 	for i := 2; i*i <= number_to_factor; i++ {
@@ -30,7 +29,8 @@ func FactorSqrt(number_to_factor int) []int {
 		factor_array = append(factor_array, number_to_factor)
 	}
 
-	return factor_array
+	factorResult <- factor_array
+
 }
 
 func FactorFermat(number_to_factor int) []int {

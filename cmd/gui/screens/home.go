@@ -34,6 +34,8 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 		gutter,
 		titleLabel,
 	)
+	progressBar := widget.NewProgressBarInfinite()
+	progressBar.Hide()
 
 	resultLabel := widget.NewLabel("The Factors are: ")
 
@@ -51,42 +53,66 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 				dialog.ShowInformation("Non-number characters entered", "Pleaes enter valid numbers", w)
 				return
 			}
-
+			factorResult := make(chan []int, 1)
 			switch selectedMethod {
 			case "Trial Division":
 				start := time.Now()
-				factorResult := factorization.FactorTrialDivision(numberToFactor)
-				duration := time.Since(start)
-				if BenchmarkOn == true {
-					resultLabel.SetText(fmt.Sprintf("Factors: %v \nMethod: Trial Division\nBenchmark Time: %v", factorResult, duration))
-					fmt.Printf("\nTime to find Factors: %s\n", duration)
-				} else {
-					resultLabel.SetText(fmt.Sprintf("Factors: %v \nMethod: Trial Division", factorResult))
-				}
-				log.Println(factorResult)
-				log.Println("Current method:", selectedMethod)
+				progressBar.Show()
+				go func() {
+					factorization.FactorTrialDivision(numberToFactor, factorResult)
+					factors := <-factorResult
+					duration := time.Since(start)
+					fyne.Do(func() {
+						progressBar.Hide()
+						if BenchmarkOn == true {
+							resultLabel.SetText(fmt.Sprintf("Factors: %v \nMethod: Trial Division\nBenchmark Time: %v", factors, duration))
+							fmt.Printf("\nTime to find Factors: %s\n", duration)
+						} else {
+							resultLabel.SetText(fmt.Sprintf("Factors: %v \nMethod: Trial Division", factors))
+						}
+					})
+					log.Println(factors)
+					log.Println("Current method:", selectedMethod)
+				}()
+
 			case "Square Root":
 				start := time.Now()
-				factorResult := factorization.FactorSqrt(numberToFactor)
-				duration := time.Since(start)
-				if BenchmarkOn == true {
-					resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Square Root\nBenchmark Time: %v", factorResult, duration))
-				} else {
-					resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Square Root", factorResult))
-				}
-				log.Println(factorResult)
-				log.Println("Current method:", selectedMethod)
+				progressBar.Show()
+				go func() {
+					factorization.FactorSqrt(numberToFactor, factorResult)
+					factors := <-factorResult
+					duration := time.Since(start)
+					fyne.Do(func() {
+						progressBar.Hide()
+						if BenchmarkOn == true {
+							resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Square Root\nBenchmark Time: %v", factors, duration))
+						} else {
+							resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Square Root", factors))
+						}
+					})
+					log.Println(factors)
+					log.Println("Current method:", selectedMethod)
+				}()
+
 			case "Fermat Factorization":
 				start := time.Now()
-				factorResult := factorization.FactorFermat(numberToFactor)
-				duration := time.Since(start)
-				if BenchmarkOn == true {
-					resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Fermat\nBenchmark Time: %v", factorResult, duration))
-				} else {
-					resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Fermat", factorResult))
-				}
-				log.Println(factorResult)
-				log.Println("Current method:", selectedMethod)
+				progressBar.Show()
+				go func() {
+					factors := factorization.FactorFermat(numberToFactor)
+					factorResult <- factors
+
+					duration := time.Since(start)
+					fyne.Do(func() {
+						progressBar.Hide()
+						if BenchmarkOn == true {
+							resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Fermat\nBenchmark Time: %v", factors, duration))
+						} else {
+							resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Fermat", factors))
+						}
+					})
+					log.Println(factors)
+					log.Println("Current method:", selectedMethod)
+				}()
 			default:
 				fmt.Println("Invalid method selected")
 			}
@@ -138,6 +164,7 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 		page,
 		panel,
 		gap,
+		progressBar,
 		outputPanel,
 	)
 
