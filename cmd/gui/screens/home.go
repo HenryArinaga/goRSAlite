@@ -18,14 +18,22 @@ import (
 )
 
 var BenchmarkOn bool
+var currentInputText string
 
 func HomeScreen(w fyne.Window) fyne.CanvasObject {
 
 	entry := widget.NewEntry()
+	entry.SetText(currentInputText)
+
+	entry.OnChanged = func(newText string) {
+		currentInputText = newText
+	}
+
 	titleLabel := container.New(
 		layout.NewVBoxLayout(),
 		widget.NewLabel("Prime Factorization"),
 	)
+	entry.SetPlaceHolder("Enter a postive integer...")
 
 	gutter := canvas.NewRectangle(color.Transparent)
 	gutter.SetMinSize(fyne.NewSize(200, 0))
@@ -38,6 +46,8 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 	progressBar.Hide()
 
 	resultLabel := widget.NewLabel("The Factors are: ")
+
+	entry.Text = currentInputText
 
 	// create the same buttons in the same container
 	factorButtons := container.NewHBox(
@@ -120,8 +130,10 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 		}),
 		widget.NewButton("Clear", func() {
 			entry.SetText("")
+			currentInputText = ("")
 		}),
 	)
+	entry.Text = currentInputText
 
 	//pass buttons to rectangle container so it sits on top of the rectangle
 	rectangle1 := canvas.NewRectangle(color.Black)
