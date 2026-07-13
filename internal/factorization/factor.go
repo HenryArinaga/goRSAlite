@@ -1,14 +1,28 @@
 package factorization
 
 import (
+	"context"
+	"fmt"
 	"math"
 )
 
-func FactorTrialDivision(number_to_factor int, factorResult chan []int) {
+func FactorTrialDivision(number_to_factor int, factorResult chan []int, ctx context.Context) {
 
 	factor_array := make([]int, 0)
 	for i := 2; i <= number_to_factor; i++ {
+		select {
+		case <-ctx.Done():
+			fmt.Println("Ctx cancelled")
+			return
+		default:
+		}
 		for number_to_factor%i == 0 {
+			select {
+			case <-ctx.Done():
+				fmt.Println("Ctx cancelled")
+				return
+			default:
+			}
 			factor_array = append(factor_array, i)
 			number_to_factor = number_to_factor / i
 		}

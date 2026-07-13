@@ -1,6 +1,7 @@
 package screens
 
 import (
+	"context"
 	"fmt"
 	"image/color"
 	"log"
@@ -49,6 +50,18 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 
 	entry.Text = currentInputText
 
+	canceledLabel := widget.NewLabel("Operation Canceled!")
+	canceledLabel.Hide()
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	cancelButton := widget.NewButton("Cancel", func() {
+		cancel()
+		progressBar.Hide()
+		canceledLabel.Show()
+
+	})
+	cancelButton.Hide()
 	// create the same buttons in the same container
 	factorButtons := container.NewHBox(
 		layout.NewSpacer(),
@@ -66,13 +79,15 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 			factorResult := make(chan []int, 1)
 			switch selectedMethod {
 			case "Trial Division":
+				cancelButton.Show()
 				start := time.Now()
 				progressBar.Show()
 				go func() {
-					factorization.FactorTrialDivision(numberToFactor, factorResult)
+					factorization.FactorTrialDivision(numberToFactor, factorResult, ctx)
 					factors := <-factorResult
 					duration := time.Since(start)
 					fyne.Do(func() {
+						cancelButton.Hide()
 						progressBar.Hide()
 						if BenchmarkOn == true {
 							resultLabel.SetText(fmt.Sprintf("Factors: %v \nMethod: Trial Division\nBenchmark Time: %v", factors, duration))
@@ -86,6 +101,7 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 				}()
 
 			case "Square Root":
+				cancelButton.Show()
 				start := time.Now()
 				progressBar.Show()
 				go func() {
@@ -93,6 +109,7 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 					factors := <-factorResult
 					duration := time.Since(start)
 					fyne.Do(func() {
+						cancelButton.Hide()
 						progressBar.Hide()
 						if BenchmarkOn == true {
 							resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Square Root\nBenchmark Time: %v", factors, duration))
@@ -105,14 +122,15 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 				}()
 
 			case "Fermat Factorization":
+				cancelButton.Show()
 				start := time.Now()
 				progressBar.Show()
 				go func() {
 					factors := factorization.FactorFermat(numberToFactor)
 					factorResult <- factors
-
 					duration := time.Since(start)
 					fyne.Do(func() {
+						cancelButton.Hide()
 						progressBar.Hide()
 						if BenchmarkOn == true {
 							resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Fermat\nBenchmark Time: %v", factors, duration))
@@ -132,6 +150,7 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 			entry.SetText("")
 			currentInputText = ("")
 		}),
+		cancelButton,
 	)
 	entry.Text = currentInputText
 
@@ -155,13 +174,11 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 	rectangle2 := canvas.NewRectangle(color.Black)
 	rectangle2.SetMinSize(fyne.NewSize(800, 400))
 
-	rectangle2Content := container.NewPadded(
-		container.NewVBox(
-			widget.NewLabel("Results"),
-			container.NewVBox(
-				resultLabel),
-		),
-	)
+	rectangle2Content := container.NewPadded(container.NewVBox(
+		widget.NewLabel("Results"),
+		container.NewVBox(resultLabel),
+		container.NewVBox(canceledLabel),
+	))
 
 	outputPanel := container.NewStack(
 		rectangle2,
