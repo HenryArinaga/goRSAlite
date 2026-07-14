@@ -10,12 +10,17 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func SettingsScreen() fyne.CanvasObject {
+func SettingsScreen( /*a fyne.App*/ ) fyne.CanvasObject {
 
-	lightModeCheck := widget.NewCheck("Light mode (coming soon)",
-		func(turnOnLightMode bool) {
+	/*lightModeCheck := widget.NewCheck("Light mode (coming soon)",
+	func(turnOnLightMode bool) {
+		if turnOnLightMode == true {
+			a.Settings().SetTheme(theme.LightTheme())
+		} else {
+			a.Settings().SetTheme(theme.DarkTheme())
 
-		})
+		}
+	}) */
 
 	benchmarkModeCheck := widget.NewCheck("Benchmark mode",
 		func(turnOnBenchmarkMode bool) {
@@ -38,7 +43,6 @@ func SettingsScreen() fyne.CanvasObject {
 		})
 	recAppearance1 := canvas.NewRectangle(color.Black)
 	recAppearance1.SetMinSize(fyne.NewSize(500, 50))
-	lightModeCheck.Disable()
 
 	recAppearance2 := canvas.NewRectangle(color.Black)
 	recAppearance2.SetMinSize(fyne.NewSize(500, 50))
@@ -51,17 +55,18 @@ func SettingsScreen() fyne.CanvasObject {
 	recAppearance4.SetMinSize(fyne.NewSize(500, 50))
 	simdModeCheck.Disable()
 
-	Appearance := widget.NewLabel("Appearance")
+	/*Appearance := widget.NewLabel("Appearance")
 	Appearance.TextStyle = fyne.TextStyle{Bold: true}
 	appearanceHeading := container.New(layout.NewCenterLayout(), Appearance, layout.NewSpacer())
-	lightModeRow := container.New(layout.NewStackLayout(), recAppearance1, layout.NewSpacer(), lightModeCheck)
-	appearanceBox := container.New(layout.NewVBoxLayout(), appearanceHeading, lightModeRow, layout.NewSpacer())
+	lightModeRow := container.New(layout.NewStackLayout(), recAppearance1, layout.NewSpacer(), )
+	appearanceBox := container.New(layout.NewVBoxLayout(), appearanceHeading, lightModeRow, layout.NewSpacer()) */
 
 	optimizationSettings := widget.NewLabel("Optimization Settings")
 	optimizationSettings.TextStyle = fyne.TextStyle{Bold: true}
 	optimizationHeading := container.New(layout.NewCenterLayout(), optimizationSettings, layout.NewSpacer())
-	optimizationRow := container.New(layout.NewStackLayout(), recAppearance2, benchmarkModeCheck)
-	optimizationBox := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), optimizationHeading, optimizationRow, layout.NewSpacer())
+
+	benchmarkModeCheckRow := container.New(layout.NewStackLayout(), recAppearance2, benchmarkModeCheck)
+	benchmarkBox := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), optimizationHeading, benchmarkModeCheckRow, layout.NewSpacer())
 
 	sieveRow := container.New(layout.NewStackLayout(), recAppearance3, sieveModeCheck)
 	sieveBox := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), sieveRow, layout.NewSpacer())
@@ -69,7 +74,7 @@ func SettingsScreen() fyne.CanvasObject {
 	simdRow := container.New(layout.NewStackLayout(), recAppearance4, simdModeCheck)
 	simdBox := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), simdRow, layout.NewSpacer())
 
-	centered1 := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), appearanceBox, optimizationBox, sieveBox, simdBox, layout.NewSpacer())
+	centered1 := container.New(layout.NewVBoxLayout() /*appearanceBox,*/, benchmarkBox, sieveBox, simdBox, layout.NewSpacer())
 
 	limitSize := container.New(layout.NewHBoxLayout(), layout.NewSpacer(), centered1, layout.NewSpacer())
 	return limitSize
