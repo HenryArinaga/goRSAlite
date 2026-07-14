@@ -31,7 +31,7 @@ func main() {
 		centerContent.Objects = []fyne.CanvasObject{screens.HomeScreen(w)}
 		centerContent.Refresh()
 	})
-	MethodsButton := widget.NewButton("Methods", func() {
+	MethodsButton := widget.NewButtonWithIcon("Methods", theme.ComputerIcon(), func() {
 		log.Println("Methods tapped")
 		centerContent.Objects = []fyne.CanvasObject{screens.MethodScreen()}
 		centerContent.Refresh()
@@ -52,8 +52,8 @@ func main() {
 	leftSidebar := container.NewVBox(
 		HomeButton,
 		MethodsButton,
-		SettingsButton,
 		LogsButton,
+		SettingsButton,
 	)
 
 	outsideBorder := container.NewBorder(topBar, nil, leftSidebar, nil, centerContent)

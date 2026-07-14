@@ -14,7 +14,7 @@ import (
 type MethodCard struct {
 	MethodName string
 	Rectangle  *canvas.Rectangle
-	Label      *widget.Label
+	Label      *canvas.Text
 	Selected   bool
 	widget.BaseWidget
 	cardList []*MethodCard
@@ -27,7 +27,7 @@ func (methodCardClicked *MethodCard) Tapped(eventInfo *fyne.PointEvent) {
 
 	for _, card := range methodCardClicked.cardList {
 		card.Selected = false
-		card.Rectangle.FillColor = color.Black
+		card.Rectangle.FillColor = backgroundColor
 		card.Refresh()
 
 	}
@@ -54,20 +54,20 @@ func (methodCardClicked *MethodCard) CreateRenderer() fyne.WidgetRenderer {
 
 func MethodScreen() fyne.CanvasObject {
 
-	rectangle1 := canvas.NewRectangle(color.Black)
+	rectangle1 := canvas.NewRectangle(backgroundColor)
 	rectangle1.SetMinSize(fyne.NewSize(500, 50))
-	rectangle2 := canvas.NewRectangle(color.Black)
+	rectangle2 := canvas.NewRectangle(backgroundColor)
 	rectangle2.SetMinSize(fyne.NewSize(500, 50))
-	rectangle3 := canvas.NewRectangle(color.Black)
+	rectangle3 := canvas.NewRectangle(backgroundColor)
 	rectangle3.SetMinSize(fyne.NewSize(500, 50))
-	trialDivison := widget.NewLabel("Trial Division")
-	sqrt := widget.NewLabel("Square Root")
-	fermat := widget.NewLabel("Fermat Method")
+	trialDivision := canvas.NewText("Trial Division", textColor)
+	sqrt := canvas.NewText("Square Root", textColor)
+	fermat := canvas.NewText("Fermat Method", textColor)
 
 	card1 := MethodCard{
 		MethodName: "Trial Division",
 		Rectangle:  rectangle1,
-		Label:      trialDivison,
+		Label:      trialDivision,
 	}
 	card1.ExtendBaseWidget(&card1)
 
@@ -95,7 +95,7 @@ func MethodScreen() fyne.CanvasObject {
 			v.Rectangle.FillColor = color.RGBA{R: 80, G: 140, B: 255, A: 255}
 			v.Selected = true
 		} else {
-			v.Rectangle.FillColor = color.Black
+			v.Rectangle.FillColor = backgroundColor
 			v.Selected = false
 		}
 

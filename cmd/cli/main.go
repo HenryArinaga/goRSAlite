@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"goRSAlite/internal/factorization"
 	"goRSAlite/internal/rsa"
@@ -43,23 +44,28 @@ func main() {
 		fmt.Println("Invalid method selected, please enter 1, 2, or 3.")
 		return
 	}
+	factorResult := make(chan []int, 1)
+	ctx := context.Background()
 
 	switch factor_method {
 	case 1:
-		factor_Result = factorization.FactorTrialDivision(number_to_factor)
+		factorization.FactorTrialDivision(number_to_factor, factorResult, ctx)
+		factor_Result = <-factorResult
+
 	case 2:
-		factor_Result = factorization.FactorSqrt(number_to_factor)
+		factorization.FactorSqrt(number_to_factor, factorResult, ctx)
+		factor_Result = <-factorResult
 	case 3:
-		factor_Result = factorization.FactorFermat(number_to_factor)
+		factor_Result = factorization.FactorFermat(number_to_factor, ctx)
 	default:
 		fmt.Println("Invalid method selected")
 	}
 
-	rsa_message(factor_Result, int(message[0]), input)
+	rsa_message(factor_Result, input)
 
 }
 
-func rsa_message(factor_Result []int, message int, input string) {
+func rsa_message(factor_Result []int, input string) {
 
 	var decrypted_message []int
 	var ciphertext []int

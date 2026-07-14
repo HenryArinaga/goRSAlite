@@ -105,7 +105,7 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 				start := time.Now()
 				progressBar.Show()
 				go func() {
-					factorization.FactorSqrt(numberToFactor, factorResult)
+					factorization.FactorSqrt(numberToFactor, factorResult, ctx)
 					factors := <-factorResult
 					duration := time.Since(start)
 					fyne.Do(func() {
@@ -126,7 +126,7 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 				start := time.Now()
 				progressBar.Show()
 				go func() {
-					factors := factorization.FactorFermat(numberToFactor)
+					factors := factorization.FactorFermat(numberToFactor, ctx)
 					factorResult <- factors
 					duration := time.Since(start)
 					fyne.Do(func() {
