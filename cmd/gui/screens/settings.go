@@ -31,11 +31,15 @@ func SettingsScreen( /*a fyne.App*/ ) fyne.CanvasObject {
 	if BenchmarkOn == true {
 		benchmarkModeCheck.SetChecked(true)
 	}
+	bottomTextBenchmark := widget.NewLabel("Time your factor results")
+	bottomTextBenchmark.TextStyle.Italic = true
 
 	sieveModeCheck := widget.NewCheck("Sieve mode (coming soon)",
 		func(turnOnSieveMode bool) {
 
 		})
+	bottomTextSieve := widget.NewLabel("Only usable with trial division")
+	bottomTextSieve.TextStyle.Italic = true
 
 	simdModeCheck := widget.NewCheck("SIMD Acceleration mode (coming soon)",
 		func(turnOnSimdMode bool) {
@@ -65,10 +69,12 @@ func SettingsScreen( /*a fyne.App*/ ) fyne.CanvasObject {
 	optimizationSettings.TextStyle = fyne.TextStyle{Bold: true}
 	optimizationHeading := container.New(layout.NewCenterLayout(), optimizationSettings, layout.NewSpacer())
 
-	benchmarkModeCheckRow := container.New(layout.NewStackLayout(), recAppearance2, benchmarkModeCheck)
+	benchmarkSubText := container.New(layout.NewVBoxLayout(), benchmarkModeCheck, bottomTextBenchmark)
+	benchmarkModeCheckRow := container.New(layout.NewStackLayout(), recAppearance2, benchmarkSubText)
 	benchmarkBox := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), optimizationHeading, benchmarkModeCheckRow, layout.NewSpacer())
 
-	sieveRow := container.New(layout.NewStackLayout(), recAppearance3, sieveModeCheck)
+	sieveSubText := container.New(layout.NewVBoxLayout(), sieveModeCheck, bottomTextSieve)
+	sieveRow := container.New(layout.NewStackLayout(), recAppearance3, sieveSubText, layout.NewSpacer())
 	sieveBox := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), sieveRow, layout.NewSpacer())
 
 	simdRow := container.New(layout.NewStackLayout(), recAppearance4, simdModeCheck)
