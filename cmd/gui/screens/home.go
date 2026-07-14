@@ -47,6 +47,7 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 	progressBar.Hide()
 
 	resultLabel := widget.NewLabel("The Factors are: ")
+	resultLabel.Wrapping = fyne.TextWrapWord
 
 	entry.Text = currentInputText
 
