@@ -1,6 +1,7 @@
 package screens
 
 import (
+	"goRSAlite/internal/controller"
 	"image/color"
 
 	"fyne.io/fyne/v2"
@@ -10,25 +11,15 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func SettingsScreen( /*a fyne.App*/ ) fyne.CanvasObject {
-
-	/*lightModeCheck := widget.NewCheck("Light mode (coming soon)",
-	func(turnOnLightMode bool) {
-		if turnOnLightMode == true {
-			a.Settings().SetTheme(theme.LightTheme())
-		} else {
-			a.Settings().SetTheme(theme.DarkTheme())
-
-		}
-	}) */
+func SettingsScreen(appController *controller.Controller) fyne.CanvasObject {
 
 	benchmarkModeCheck := widget.NewCheck("Benchmark mode",
 		func(turnOnBenchmarkMode bool) {
-			BenchmarkOn = turnOnBenchmarkMode
+			appController.BenchmarkOn = turnOnBenchmarkMode
 
 		})
 
-	if BenchmarkOn == true {
+	if appController.BenchmarkOn == true {
 		benchmarkModeCheck.SetChecked(true)
 	}
 	bottomTextBenchmark := widget.NewLabel("Time your factor results")
@@ -36,9 +27,14 @@ func SettingsScreen( /*a fyne.App*/ ) fyne.CanvasObject {
 
 	sieveModeCheck := widget.NewCheck("Sieve mode (coming soon)",
 		func(turnOnSieveMode bool) {
-
+			appController.SieveOn = turnOnSieveMode
 		})
-	bottomTextSieve := widget.NewLabel("Only usable with trial division")
+
+	if appController.SieveOn == true {
+		sieveModeCheck.SetChecked(true)
+	}
+
+	bottomTextSieve := widget.NewLabel("Apply Sieve to find factors faster; Only usable with trial division")
 	bottomTextSieve.TextStyle.Italic = true
 
 	simdModeCheck := widget.NewCheck("SIMD Acceleration mode (coming soon)",
@@ -53,17 +49,10 @@ func SettingsScreen( /*a fyne.App*/ ) fyne.CanvasObject {
 
 	recAppearance3 := canvas.NewRectangle(color.Black)
 	recAppearance3.SetMinSize(fyne.NewSize(500, 50))
-	sieveModeCheck.Disable()
 
 	recAppearance4 := canvas.NewRectangle(color.Black)
 	recAppearance4.SetMinSize(fyne.NewSize(500, 50))
 	simdModeCheck.Disable()
-
-	/*Appearance := widget.NewLabel("Appearance")
-	Appearance.TextStyle = fyne.TextStyle{Bold: true}
-	appearanceHeading := container.New(layout.NewCenterLayout(), Appearance, layout.NewSpacer())
-	lightModeRow := container.New(layout.NewStackLayout(), recAppearance1, layout.NewSpacer(), )
-	appearanceBox := container.New(layout.NewVBoxLayout(), appearanceHeading, lightModeRow, layout.NewSpacer()) */
 
 	optimizationSettings := widget.NewLabel("Optimization Settings")
 	optimizationSettings.TextStyle = fyne.TextStyle{Bold: true}

@@ -15,3 +15,14 @@ func IsPrime(number_to_factor int) bool {
 	return true
 
 }
+
+func Sieve(number_to_factor int) []int {
+	var res []int
+	for i := 2; i <= number_to_factor; i++ {
+		if IsPrime(i) {
+			res = append(res, i)
+		}
+	}
+
+	return res
+}

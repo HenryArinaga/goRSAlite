@@ -6,6 +6,33 @@ import (
 	"math"
 )
 
+func FactorTrialDivisionSieve(number_to_factor int, factorResult chan []int, ctx context.Context) {
+
+	factor_array := make([]int, 0)
+	factorSlice := Sieve(number_to_factor)
+	for _, numberToCheck := range factorSlice {
+
+		select {
+		case <-ctx.Done():
+			fmt.Println("Ctx cancelled")
+			return
+		default:
+		}
+		for number_to_factor%numberToCheck == 0 {
+			select {
+			case <-ctx.Done():
+				fmt.Println("Ctx cancelled")
+				return
+			default:
+			}
+			factor_array = append(factor_array, numberToCheck)
+			number_to_factor = number_to_factor / numberToCheck
+		}
+
+	}
+	factorResult <- factor_array
+}
+
 func FactorTrialDivision(number_to_factor int, factorResult chan []int, ctx context.Context) {
 
 	factor_array := make([]int, 0)

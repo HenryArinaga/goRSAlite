@@ -1,6 +1,7 @@
 package screens
 
 import (
+	"goRSAlite/internal/controller"
 	"image/color"
 	"log"
 
@@ -17,10 +18,10 @@ type MethodCard struct {
 	Label      *widget.Label
 	Selected   bool
 	widget.BaseWidget
-	cardList []*MethodCard
+	cardList   []*MethodCard
+	Controller *controller.Controller
 }
 
-var selectedMethod string
 var benchmark bool
 
 func (methodCardClicked *MethodCard) Tapped(eventInfo *fyne.PointEvent) {
@@ -31,12 +32,12 @@ func (methodCardClicked *MethodCard) Tapped(eventInfo *fyne.PointEvent) {
 		card.Refresh()
 
 	}
-	selectedMethod = methodCardClicked.MethodName
+	methodCardClicked.Controller.SelectedMethod = methodCardClicked.MethodName
 	methodCardClicked.Selected = true
 	methodCardClicked.Rectangle.FillColor = color.RGBA{R: 80, G: 140, B: 255, A: 255}
 	methodCardClicked.Refresh()
 
-	selectedMethod = methodCardClicked.MethodName
+	methodCardClicked.Controller.SelectedMethod = methodCardClicked.MethodName
 	log.Println("Select set to", methodCardClicked.MethodName)
 
 }
@@ -52,7 +53,7 @@ func (methodCardClicked *MethodCard) CreateRenderer() fyne.WidgetRenderer {
 	return widget.NewSimpleRenderer(widgetContainer)
 }
 
-func MethodScreen() fyne.CanvasObject {
+func MethodScreen(appController *controller.Controller) fyne.CanvasObject {
 
 	rectangle1 := canvas.NewRectangle(color.Black)
 	rectangle1.SetMinSize(fyne.NewSize(500, 50))
@@ -68,6 +69,7 @@ func MethodScreen() fyne.CanvasObject {
 		MethodName: "Trial Division",
 		Rectangle:  rectangle1,
 		Label:      trialDivison,
+		Controller: appController,
 	}
 	card1.ExtendBaseWidget(&card1)
 
@@ -75,6 +77,7 @@ func MethodScreen() fyne.CanvasObject {
 		MethodName: "Square Root",
 		Rectangle:  rectangle2,
 		Label:      sqrt,
+		Controller: appController,
 	}
 	card2.ExtendBaseWidget(&card2)
 
@@ -82,6 +85,7 @@ func MethodScreen() fyne.CanvasObject {
 		MethodName: "Fermat Factorization",
 		Rectangle:  rectangle3,
 		Label:      fermat,
+		Controller: appController,
 	}
 	card3.ExtendBaseWidget(&card3)
 
@@ -91,7 +95,7 @@ func MethodScreen() fyne.CanvasObject {
 	card3.cardList = cardList
 
 	for _, v := range cardList {
-		if selectedMethod == v.MethodName {
+		if appController.SelectedMethod == v.MethodName {
 			v.Rectangle.FillColor = color.RGBA{R: 80, G: 140, B: 255, A: 255}
 			v.Selected = true
 		} else {

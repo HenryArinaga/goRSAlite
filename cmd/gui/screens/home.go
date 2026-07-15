@@ -1,13 +1,11 @@
 package screens
 
 import (
-	"context"
 	"fmt"
 	"image/color"
 	"log"
-	"time"
 
-	"goRSAlite/internal/factorization"
+	"goRSAlite/internal/controller"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -18,16 +16,13 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-var BenchmarkOn bool
-var currentInputText string
-
-func HomeScreen(w fyne.Window) fyne.CanvasObject {
+func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.CanvasObject {
 
 	entry := widget.NewEntry()
-	entry.SetText(currentInputText)
+	entry.SetText(appController.CurrentInputText)
 
 	entry.OnChanged = func(newText string) {
-		currentInputText = newText
+		appController.CurrentInputText = newText
 	}
 
 	titleLabel := container.New(
@@ -49,27 +44,43 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 	resultLabel := widget.NewLabel("The Factors are: ")
 	resultLabel.Wrapping = fyne.TextWrapWord
 
-	entry.Text = currentInputText
+	entry.Text = appController.CurrentInputText
 
 	canceledLabel := widget.NewLabel("Operation Canceled!")
 	canceledLabel.Hide()
 
-	ctx, cancel := context.WithCancel(context.Background())
-
 	cancelButton := widget.NewButton("Cancel", func() {
-		cancel()
+		appController.CancelRunningFunction()
 		progressBar.Hide()
 		canceledLabel.Show()
 
 	})
 	cancelButton.Hide()
+	if appController.Running == false {
+		cancelButton.Hide()
+		progressBar.Hide()
+	} else {
+		cancelButton.Show()
+		progressBar.Show()
+	}
+	if len(appController.LatestFactors) == 0 {
+		resultLabel.SetText("Factors will be displayed here:")
+	} else {
+		if appController.BenchmarkOn == true {
+			resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s \nBenchmark Time: %v", appController.FactoredNumber, appController.LatestFactors, appController.SelectedMethod, appController.Duration))
+			fmt.Printf("\nTime to find Factors: %s\n", appController.Duration)
+		} else {
+			resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s", appController.FactoredNumber, appController.LatestFactors, appController.SelectedMethod))
+		}
+
+	}
 	// create the same buttons in the same container
 	factorButtons := container.NewHBox(
 		layout.NewSpacer(),
 		widget.NewButton("Factor", func() {
 			text := entry.Text
 			numberToFactor, err := strconv.Atoi(text)
-			if selectedMethod == "" {
+			if appController.SelectedMethod == "" {
 				dialog.ShowInformation("No Method Selected", "Pleaes selecte a Method", w)
 				return
 			}
@@ -77,83 +88,38 @@ func HomeScreen(w fyne.Window) fyne.CanvasObject {
 				dialog.ShowInformation("Non-number characters entered", "Pleaes enter valid numbers", w)
 				return
 			}
-			factorResult := make(chan []int, 1)
-			switch selectedMethod {
-			case "Trial Division":
-				cancelButton.Show()
-				start := time.Now()
-				progressBar.Show()
-				go func() {
-					factorization.FactorTrialDivision(numberToFactor, factorResult, ctx)
-					factors := <-factorResult
-					duration := time.Since(start)
-					fyne.Do(func() {
+			progressBar.Show()
+			cancelButton.Show()
+			appController.DoFactorization(numberToFactor)
+			go func() {
+				factors := <-appController.Done
+				fyne.Do(func() {
+					if appController.Running == false {
 						cancelButton.Hide()
 						progressBar.Hide()
-						if BenchmarkOn == true {
-							resultLabel.SetText(fmt.Sprintf("Factors: %v \nMethod: Trial Division\nBenchmark Time: %v", factors, duration))
-							fmt.Printf("\nTime to find Factors: %s\n", duration)
-						} else {
-							resultLabel.SetText(fmt.Sprintf("Factors: %v \nMethod: Trial Division", factors))
-						}
-					})
-					log.Println(factors)
-					log.Println("Current method:", selectedMethod)
-				}()
-
-			case "Square Root":
-				cancelButton.Show()
-				start := time.Now()
-				progressBar.Show()
-				go func() {
-					factorization.FactorSqrt(numberToFactor, factorResult, ctx)
-					factors := <-factorResult
-					duration := time.Since(start)
-					fyne.Do(func() {
-						cancelButton.Hide()
-						progressBar.Hide()
-						if BenchmarkOn == true {
-							resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Square Root\nBenchmark Time: %v", factors, duration))
-						} else {
-							resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Square Root", factors))
-						}
-					})
-					log.Println(factors)
-					log.Println("Current method:", selectedMethod)
-				}()
-
-			case "Fermat Factorization":
-				cancelButton.Show()
-				start := time.Now()
-				progressBar.Show()
-				go func() {
-					factors := factorization.FactorFermat(numberToFactor, ctx)
-					factorResult <- factors
-					duration := time.Since(start)
-					fyne.Do(func() {
-						cancelButton.Hide()
-						progressBar.Hide()
-						if BenchmarkOn == true {
-							resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Fermat\nBenchmark Time: %v", factors, duration))
-						} else {
-							resultLabel.SetText(fmt.Sprintf("Factors: %v\nMethod: Fermat", factors))
-						}
-					})
-					log.Println(factors)
-					log.Println("Current method:", selectedMethod)
-				}()
-			default:
-				fmt.Println("Invalid method selected")
-			}
-
+					}
+					if appController.BenchmarkOn == true {
+						canceledLabel.Hide()
+						resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s \nBenchmark Time: %v", appController.FactoredNumber, appController.LatestFactors, appController.SelectedMethod, appController.Duration))
+						fmt.Printf("\nTime to find Factors: %s\n", appController.Duration)
+					} else {
+						canceledLabel.Hide()
+						resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s", appController.FactoredNumber, factors, appController.SelectedMethod))
+					}
+				})
+				log.Println(appController.FactoredNumber)
+				log.Println(factors)
+				log.Println("Current method:", appController.SelectedMethod)
+			}()
 		}),
 		widget.NewButton("Clear", func() {
 			entry.SetText("")
-			currentInputText = ("")
+			appController.CurrentInputText = ("")
 		}),
 		cancelButton,
 	)
-	entry.Text = currentInputText
+
+	entry.Text = appController.CurrentInputText
 
 	//pass buttons to rectangle container so it sits on top of the rectangle
 	rectangle1 := canvas.NewRectangle(color.Black)
