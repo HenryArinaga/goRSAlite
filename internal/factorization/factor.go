@@ -7,11 +7,10 @@ import (
 )
 
 func FactorTrialDivisionSieve(number_to_factor int, factorResult chan []int, ctx context.Context) {
-
+	sqrtLimit := int(math.Sqrt(float64(number_to_factor)))
 	factor_array := make([]int, 0)
-	factorSlice := Sieve(number_to_factor)
+	factorSlice := Sieve(sqrtLimit)
 	for _, numberToCheck := range factorSlice {
-
 		select {
 		case <-ctx.Done():
 			fmt.Println("Ctx cancelled")
