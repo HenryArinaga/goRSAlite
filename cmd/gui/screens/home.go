@@ -61,7 +61,12 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 	RsaButton := container.NewHBox(
 		layout.NewSpacer(),
 		widget.NewButton("RSA Demo", func() {
-
+			go func() {
+				appController.DoRsa(appController.Totient)
+				fyne.Do(func() {
+					resultLabel.SetText(fmt.Sprintf("Totient: %v", appController.Totient))
+				})
+			}()
 		}))
 	if len(appController.LatestFactors) == 2 {
 		RsaButton.Show()

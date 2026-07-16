@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"goRSAlite/internal/factorization"
+	"goRSAlite/internal/rsa"
 	"sync"
 	"time"
 )
@@ -21,6 +22,7 @@ type Controller struct {
 	Duration         time.Duration
 	FactoredNumber   int
 	SieveOn          bool
+	Totient          int
 }
 
 func (CancelFunction *Controller) CancelRunningFunction() {
@@ -88,4 +90,9 @@ func (appController *Controller) DoFactorization(numberToFactor int) {
 		fmt.Println("Invalid method selected")
 	}
 
+}
+
+func (appController *Controller) DoRsa(numberToFactor int) int {
+	appController.Totient = rsa.Totient(appController.LatestFactors[0], appController.LatestFactors[1])
+	return appController.Totient
 }
