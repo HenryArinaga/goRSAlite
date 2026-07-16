@@ -115,6 +115,14 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		progressBar.Show()
 	}
 
+	if appController.RsaRunning == false {
+		cancelButton.Hide()
+		progressBar.Hide()
+	} else {
+		cancelButton.Show()
+		progressBar.Show()
+	}
+
 	if len(appController.LatestFactors) == 0 {
 		resultLabel.SetText("Factors will be displayed here:")
 	} else {
