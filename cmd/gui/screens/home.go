@@ -64,7 +64,38 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 			go func() {
 				appController.DoRsa(appController.Totient)
 				fyne.Do(func() {
-					resultLabel.SetText(fmt.Sprintf("Totient: %v", appController.Totient))
+					if appController.BenchmarkOn == true {
+						resultLabel.SetText(fmt.Sprintf(
+							"RSA Values\nP: %v, Q: %v\nEuler's Totient "+
+								"%v\nPublic Exponent e: %v\nPrivate Exponent d: %v"+
+								"\nPublic Key: (%v , %v)\nPrivate Key: (%v, %v)\nBenchmark Time: %v",
+							appController.LatestFactors[0],
+							appController.LatestFactors[1],
+							appController.Totient,
+							appController.E,
+							appController.D,
+							appController.E,
+							appController.LatestFactors[0]*appController.LatestFactors[1],
+							appController.D,
+							appController.LatestFactors[0]*appController.LatestFactors[1],
+							appController.RsaDuration,
+						))
+					} else {
+						resultLabel.SetText(fmt.Sprintf(
+							"RSA Values\nP: %v, Q: %v\nEuler's Totient "+
+								"%v\nPublic Exponent e: %v\nPrivate Exponent d: %v"+
+								"\nPublic Key: (%v , %v)\nPrivate Key: (%v, %v)",
+							appController.LatestFactors[0],
+							appController.LatestFactors[1],
+							appController.Totient,
+							appController.E,
+							appController.D,
+							appController.E,
+							appController.LatestFactors[0]*appController.LatestFactors[1],
+							appController.D,
+							appController.LatestFactors[0]*appController.LatestFactors[1],
+						))
+					}
 				})
 			}()
 		}))

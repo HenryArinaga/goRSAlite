@@ -23,6 +23,9 @@ type Controller struct {
 	FactoredNumber   int
 	SieveOn          bool
 	Totient          int
+	E                int
+	D                int
+	RsaDuration      time.Duration
 }
 
 func (CancelFunction *Controller) CancelRunningFunction() {
@@ -92,7 +95,13 @@ func (appController *Controller) DoFactorization(numberToFactor int) {
 
 }
 
-func (appController *Controller) DoRsa(numberToFactor int) int {
-	appController.Totient = rsa.Totient(appController.LatestFactors[0], appController.LatestFactors[1])
-	return appController.Totient
+func (appController *Controller) DoRsa(numberToFactor int) (int, int, int) {
+	start := time.Now()
+	go func() {
+		appController.Totient = rsa.Totient(appController.LatestFactors[0], appController.LatestFactors[1])
+		appController.E = rsa.E(appController.Totient)
+		appController.D = rsa.D(appController.E, appController.Totient)
+		appController.RsaDuration = time.Since(start)
+	}()
+	return appController.Totient, appController.E, appController.D
 }
