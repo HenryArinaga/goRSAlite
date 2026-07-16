@@ -29,6 +29,9 @@ func FactorTrialDivisionSieve(number_to_factor int, factorResult chan []int, ctx
 		}
 
 	}
+	if number_to_factor > 1 {
+		factor_array = append(factor_array, number_to_factor)
+	}
 	factorResult <- factor_array
 }
 

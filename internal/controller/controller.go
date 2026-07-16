@@ -78,6 +78,7 @@ func (appController *Controller) DoFactorization(numberToFactor int) {
 			appController.Done <- appController.LatestFactors
 		}()
 	case "Fermat Factorization":
+		appController.ctx, appController.cancel = context.WithCancel(context.Background())
 		appController.Running = true
 		start := time.Now()
 		go func() {

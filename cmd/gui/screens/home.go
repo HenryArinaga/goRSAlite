@@ -66,9 +66,10 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 				fyne.Do(func() {
 					if appController.BenchmarkOn == true {
 						resultLabel.SetText(fmt.Sprintf(
-							"RSA Values\nP: %v, Q: %v\nEuler's Totient "+
+							"RSA Values\nFactored number: %v \nP: %v, Q: %v\nEuler's Totient "+
 								"%v\nPublic Exponent e: %v\nPrivate Exponent d: %v"+
 								"\nPublic Key: (%v , %v)\nPrivate Key: (%v, %v)\nBenchmark Time: %v",
+							appController.FactoredNumber,
 							appController.LatestFactors[0],
 							appController.LatestFactors[1],
 							appController.Totient,
@@ -82,9 +83,10 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 						))
 					} else {
 						resultLabel.SetText(fmt.Sprintf(
-							"RSA Values\nP: %v, Q: %v\nEuler's Totient "+
+							"RSA Values\nFactored number: %v \nP: %v, Q: %v\nEuler's Totient "+
 								"%v\nPublic Exponent e: %v\nPrivate Exponent d: %v"+
 								"\nPublic Key: (%v , %v)\nPrivate Key: (%v, %v)",
+							appController.FactoredNumber,
 							appController.LatestFactors[0],
 							appController.LatestFactors[1],
 							appController.Totient,
@@ -182,6 +184,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		widget.NewButton("Clear", func() {
 			entry.SetText("")
 			appController.CurrentInputText = ("")
+			RsaButton.Hide()
 		}),
 		cancelButton,
 		RsaButton,
