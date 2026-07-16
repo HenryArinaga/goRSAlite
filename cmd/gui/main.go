@@ -50,17 +50,11 @@ func main() {
 		centerContent.Objects = []fyne.CanvasObject{screens.LogsScreen(appController)}
 		centerContent.Refresh()
 	})
-	RSAButton := widget.NewButton("RSA", func() {
-		log.Println("Logs tapped")
-		centerContent.Objects = []fyne.CanvasObject{screens.RSAScreen(appController)}
-		centerContent.Refresh()
-	})
 
 	w.Resize(fyne.NewSize(1200, 800))
 
 	leftSidebar := container.NewVBox(
 		HomeButton,
-		RSAButton,
 		MethodsButton,
 		LogsButton,
 		SettingsButton,

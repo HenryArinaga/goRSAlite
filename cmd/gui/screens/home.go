@@ -17,6 +17,7 @@ import (
 )
 
 func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.CanvasObject {
+	var factorButtons *fyne.Container
 
 	entry := widget.NewEntry()
 	entry.SetText(appController.CurrentInputText)
@@ -56,6 +57,20 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 
 	})
 	cancelButton.Hide()
+
+	RsaButton := container.NewHBox(
+		layout.NewSpacer(),
+		widget.NewButton("RSA Demo", func() {
+
+		}))
+	if len(appController.LatestFactors) == 2 {
+		RsaButton.Show()
+		RsaButton.Refresh()
+	} else {
+		RsaButton.Hide()
+
+	}
+
 	if appController.Running == false {
 		cancelButton.Hide()
 		progressBar.Hide()
@@ -63,6 +78,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		cancelButton.Show()
 		progressBar.Show()
 	}
+
 	if len(appController.LatestFactors) == 0 {
 		resultLabel.SetText("Factors will be displayed here:")
 	} else {
@@ -75,7 +91,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 
 	}
 	// create the same buttons in the same container
-	factorButtons := container.NewHBox(
+	factorButtons = container.NewHBox(
 		layout.NewSpacer(),
 		widget.NewButton("Factor", func() {
 			text := entry.Text
@@ -106,6 +122,13 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 						canceledLabel.Hide()
 						resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s", appController.FactoredNumber, factors, appController.SelectedMethod))
 					}
+					if len(factors) == 2 {
+						RsaButton.Show()
+					} else {
+						RsaButton.Hide()
+					}
+					factorButtons.Refresh()
+
 				})
 				log.Println(appController.FactoredNumber)
 				log.Println(factors)
@@ -117,6 +140,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 			appController.CurrentInputText = ("")
 		}),
 		cancelButton,
+		RsaButton,
 	)
 
 	entry.Text = appController.CurrentInputText
