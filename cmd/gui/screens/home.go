@@ -22,7 +22,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 	entry := widget.NewEntry()
 	messageEntry := widget.NewEntry()
 	entry.SetText(appController.CurrentInputText)
-
+	messageEntry.Hide()
 	entry.OnChanged = func(newText string) {
 		appController.CurrentInputText = newText
 	}
@@ -172,8 +172,11 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 					}
 					if len(factors) == 2 {
 						RsaButton.Show()
+						messageEntry.Show()
 					} else {
 						RsaButton.Hide()
+						messageEntry.Hide()
+
 					}
 					factorButtons.Refresh()
 
@@ -187,6 +190,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 			entry.SetText("")
 			appController.CurrentInputText = ("")
 			RsaButton.Hide()
+			messageEntry.Hide()
 		}),
 		cancelButton,
 		RsaButton,
