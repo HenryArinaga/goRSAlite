@@ -10,23 +10,27 @@ import (
 )
 
 type Controller struct {
-	BenchmarkOn      bool
-	SelectedMethod   string
-	CurrentInputText string
-	LatestFactors    []int
-	mu               sync.Mutex
-	Running          bool
-	Done             chan []int
-	ctx              context.Context
-	cancel           context.CancelFunc
-	Duration         time.Duration
-	FactoredNumber   int
-	SieveOn          bool
-	Totient          int
-	E                int
-	D                int
-	RsaDuration      time.Duration
-	RsaRunning       bool
+	BenchmarkOn        bool
+	SelectedMethod     string
+	CurrentInputText   string
+	LatestFactors      []int
+	mu                 sync.Mutex
+	Running            bool
+	Done               chan []int
+	ctx                context.Context
+	cancel             context.CancelFunc
+	Duration           time.Duration
+	FactoredNumber     int
+	SieveOn            bool
+	Totient            int
+	E                  int
+	D                  int
+	RsaDuration        time.Duration
+	RsaRunning         bool
+	Encryption         int
+	ciphertext         []int
+	input              string
+	EncryptionDuration time.Duration
 }
 
 func (CancelFunction *Controller) CancelRunningFunction() {
@@ -108,4 +112,23 @@ func (appController *Controller) DoRsa(numberToFactor int) (int, int, int) {
 		appController.RsaDuration = time.Since(start)
 	}()
 	return appController.Totient, appController.E, appController.D
+}
+
+func (appController *Controller) DoEncrypt() []int {
+	start := time.Now()
+	go func() {
+		appController.RsaRunning = true
+		n := appController.LatestFactors[0] * appController.LatestFactors[1]
+		appController.ciphertext = make([]int, 0, len(appController.input))
+		for i := 0; i < len(appController.input); i++ {
+			appController.ciphertext = append(
+				appController.ciphertext,
+				rsa.Encrypt(int(appController.input[i]),
+					appController.E,
+					n))
+		}
+		appController.RsaRunning = false
+		appController.EncryptionDuration = time.Since(start)
+	}()
+	return appController.ciphertext
 }

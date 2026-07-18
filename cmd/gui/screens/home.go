@@ -22,6 +22,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 	entry := widget.NewEntry()
 	messageEntry := widget.NewEntry()
 	entry.SetText(appController.CurrentInputText)
+	messageEntry.SetPlaceHolder("Enter a short message to encrpyt")
 	messageEntry.Hide()
 	entry.OnChanged = func(newText string) {
 		appController.CurrentInputText = newText
