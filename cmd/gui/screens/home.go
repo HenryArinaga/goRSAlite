@@ -20,6 +20,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 	var factorButtons *fyne.Container
 
 	entry := widget.NewEntry()
+	messageEntry := widget.NewEntry()
 	entry.SetText(appController.CurrentInputText)
 
 	entry.OnChanged = func(newText string) {
@@ -100,6 +101,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 					}
 				})
 			}()
+			messageEntry.Show()
 		}))
 	if len(appController.LatestFactors) == 2 {
 		RsaButton.Show()
@@ -216,6 +218,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		widget.NewLabel("Results"),
 		container.NewVBox(resultLabel),
 		container.NewVBox(canceledLabel),
+		messageEntry,
 	))
 
 	outputPanel := container.NewStack(

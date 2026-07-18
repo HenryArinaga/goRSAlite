@@ -25,7 +25,7 @@ func SettingsScreen(appController *controller.Controller) fyne.CanvasObject {
 	bottomTextBenchmark := widget.NewLabel("Time your factor results")
 	bottomTextBenchmark.TextStyle.Italic = true
 
-	sieveModeCheck := widget.NewCheck("Sieve mode (coming soon)",
+	sieveModeCheck := widget.NewCheck("Sieve mode",
 		func(turnOnSieveMode bool) {
 			appController.SieveOn = turnOnSieveMode
 		})
