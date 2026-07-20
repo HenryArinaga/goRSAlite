@@ -71,40 +71,25 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 			go func() {
 				appController.DoRsa(appController.Totient)
 				fyne.Do(func() {
-					if appController.BenchmarkOn == true {
-						resultLabel.SetText(fmt.Sprintf(
-							"RSA Values\nFactored number: %v \nP: %v, Q: %v\nEuler's Totient "+
-								"%v\nPublic Exponent e: %v\nPrivate Exponent d: %v"+
-								"\nPublic Key: (%v , %v)\nPrivate Key: (%v, %v)\nBenchmark Time: %v",
-							appController.FactoredNumber,
-							appController.LatestFactors[0],
-							appController.LatestFactors[1],
-							appController.Totient,
-							appController.PublicExponent,
-							appController.PrivateExponent,
-							appController.PublicExponent,
-							appController.LatestFactors[0]*appController.LatestFactors[1],
-							appController.PrivateExponent,
-							appController.LatestFactors[0]*appController.LatestFactors[1],
-							appController.RsaDuration,
-						))
-					} else {
-						resultLabel.SetText(fmt.Sprintf(
-							"RSA Values\nFactored number: %v \nP: %v, Q: %v\nEuler's Totient "+
-								"%v\nPublic Exponent e: %v\nPrivate Exponent d: %v"+
-								"\nPublic Key: (%v , %v)\nPrivate Key: (%v, %v)",
-							appController.FactoredNumber,
-							appController.LatestFactors[0],
-							appController.LatestFactors[1],
-							appController.Totient,
-							appController.PublicExponent,
-							appController.PrivateExponent,
-							appController.PublicExponent,
-							appController.LatestFactors[0]*appController.LatestFactors[1],
-							appController.PrivateExponent,
-							appController.LatestFactors[0]*appController.LatestFactors[1],
-						))
+					resultText := fmt.Sprintf(
+						"RSA Values\nFactored number: %v \nP: %v, Q: %v\nEuler's Totient "+
+							"%v\nPublic Exponent e: %v\nPrivate Exponent d: %v"+
+							"\nPublic Key: (%v , %v)\nPrivate Key: (%v, %v)",
+						appController.FactoredNumber,
+						appController.LatestFactors[0],
+						appController.LatestFactors[1],
+						appController.Totient,
+						appController.PublicExponent,
+						appController.PrivateExponent,
+						appController.PublicExponent,
+						appController.LatestFactors[0]*appController.LatestFactors[1],
+						appController.PrivateExponent,
+						appController.LatestFactors[0]*appController.LatestFactors[1],
+					)
+					if appController.BenchmarkOn {
+						resultText += fmt.Sprintf("\nBenchmark Time: %v", appController.RsaDuration)
 					}
+					resultLabel.SetText(resultText)
 				})
 			}()
 			messageEntry.Show()
