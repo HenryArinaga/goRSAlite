@@ -23,8 +23,8 @@ type Controller struct {
 	FactoredNumber     int
 	SieveOn            bool
 	Totient            int
-	E                  int
-	D                  int
+	PublicExponent     int
+	PrivateExponent    int
 	RsaDuration        time.Duration
 	RsaRunning         bool
 	Encryption         int
@@ -106,12 +106,12 @@ func (appController *Controller) DoRsa(numberToFactor int) (int, int, int) {
 	go func() {
 		appController.RsaRunning = true
 		appController.Totient = rsa.Totient(appController.LatestFactors[0], appController.LatestFactors[1])
-		appController.E = rsa.E(appController.Totient)
-		appController.D = rsa.D(appController.E, appController.Totient)
+		appController.PublicExponent = rsa.E(appController.Totient)
+		appController.PrivateExponent = rsa.D(appController.PublicExponent, appController.Totient)
 		appController.RsaRunning = false
 		appController.RsaDuration = time.Since(start)
 	}()
-	return appController.Totient, appController.E, appController.D
+	return appController.Totient, appController.PublicExponent, appController.PrivateExponent
 }
 
 func (appController *Controller) DoEncrypt() []int {
@@ -124,7 +124,7 @@ func (appController *Controller) DoEncrypt() []int {
 			appController.ciphertext = append(
 				appController.ciphertext,
 				rsa.Encrypt(int(appController.input[i]),
-					appController.E,
+					appController.PublicExponent,
 					n))
 		}
 		appController.RsaRunning = false

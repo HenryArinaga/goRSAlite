@@ -75,11 +75,11 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 							appController.LatestFactors[0],
 							appController.LatestFactors[1],
 							appController.Totient,
-							appController.E,
-							appController.D,
-							appController.E,
+							appController.PublicExponent,
+							appController.PrivateExponent,
+							appController.PublicExponent,
 							appController.LatestFactors[0]*appController.LatestFactors[1],
-							appController.D,
+							appController.PrivateExponent,
 							appController.LatestFactors[0]*appController.LatestFactors[1],
 							appController.RsaDuration,
 						))
@@ -92,11 +92,11 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 							appController.LatestFactors[0],
 							appController.LatestFactors[1],
 							appController.Totient,
-							appController.E,
-							appController.D,
-							appController.E,
+							appController.PublicExponent,
+							appController.PrivateExponent,
+							appController.PublicExponent,
 							appController.LatestFactors[0]*appController.LatestFactors[1],
-							appController.D,
+							appController.PrivateExponent,
 							appController.LatestFactors[0]*appController.LatestFactors[1],
 						))
 					}
@@ -143,6 +143,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 	factorButtons = container.NewHBox(
 		layout.NewSpacer(),
 		widget.NewButton("Factor", func() {
+			messageEntry.Hide()
 			text := entry.Text
 			numberToFactor, err := strconv.Atoi(text)
 			if appController.SelectedMethod == "" {
@@ -162,6 +163,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 					if appController.Running == false {
 						cancelButton.Hide()
 						progressBar.Hide()
+
 					}
 					if appController.BenchmarkOn == true {
 						canceledLabel.Hide()
@@ -173,7 +175,6 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 					}
 					if len(factors) == 2 {
 						RsaButton.Show()
-						messageEntry.Show()
 					} else {
 						RsaButton.Hide()
 						messageEntry.Hide()
