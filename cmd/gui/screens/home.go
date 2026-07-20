@@ -19,12 +19,18 @@ import (
 func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.CanvasObject {
 	var factorButtons *fyne.Container
 
+	encDecButton := container.NewHBox(
+		layout.NewSpacer(),
+		widget.NewButton("Encrypt / Decrypt", func() {
+
+		}))
 	entry := widget.NewEntry()
 	messageEntry := widget.NewEntry()
 	entry.SetText(appController.CurrentInputText)
 	messageEntry.SetPlaceHolder("Enter a short message to encrpyt")
 	messageEntry.SetText(appController.CurrentMessageText)
 	messageEntry.Hide()
+	encDecButton.Hide()
 	entry.OnChanged = func(newText string) {
 		appController.CurrentInputText = newText
 	}
@@ -63,6 +69,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		canceledLabel.Show()
 
 	})
+
 	cancelButton.Hide()
 
 	RsaButton := container.NewHBox(
@@ -93,7 +100,70 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 				})
 			}()
 			messageEntry.Show()
+			encDecButton.Show()
 		}))
+
+	// create the same buttons in the same container
+	factorButtons = container.NewHBox(
+		layout.NewSpacer(),
+		widget.NewButton("Factor", func() {
+			messageEntry.Hide()
+			encDecButton.Hide()
+			text := entry.Text
+			numberToFactor, err := strconv.Atoi(text)
+			if appController.SelectedMethod == "" {
+				dialog.ShowInformation("No Method Selected", "Pleaes selecte a Method", w)
+				return
+			}
+			if err != nil {
+				dialog.ShowInformation("Non-number characters entered", "Pleaes enter valid numbers", w)
+				return
+			}
+			progressBar.Show()
+			cancelButton.Show()
+			appController.DoFactorization(numberToFactor)
+			go func() {
+				factors := <-appController.Done
+				fyne.Do(func() {
+					if appController.Running == false {
+						cancelButton.Hide()
+						progressBar.Hide()
+					}
+					if appController.BenchmarkOn == true {
+						canceledLabel.Hide()
+						resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s \nBenchmark Time: %v", appController.FactoredNumber, appController.LatestFactors, appController.SelectedMethod, appController.Duration))
+						fmt.Printf("\nTime to find Factors: %s\n", appController.Duration)
+					} else {
+						canceledLabel.Hide()
+						resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s", appController.FactoredNumber, factors, appController.SelectedMethod))
+					}
+					if len(factors) == 2 {
+						RsaButton.Show()
+					} else {
+						RsaButton.Hide()
+						messageEntry.Hide()
+						encDecButton.Hide()
+
+					}
+					factorButtons.Refresh()
+				})
+				log.Println(appController.FactoredNumber)
+				log.Println(factors)
+				log.Println("Current method:", appController.SelectedMethod)
+			}()
+		}),
+		widget.NewButton("Clear", func() {
+			entry.SetText("")
+			appController.CurrentInputText = ("")
+			RsaButton.Hide()
+			messageEntry.Hide()
+			encDecButton.Hide()
+
+		}),
+		cancelButton,
+		RsaButton,
+	)
+
 	if len(appController.LatestFactors) == 2 {
 		RsaButton.Show()
 		RsaButton.Refresh()
@@ -129,62 +199,6 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		}
 
 	}
-	// create the same buttons in the same container
-	factorButtons = container.NewHBox(
-		layout.NewSpacer(),
-		widget.NewButton("Factor", func() {
-			messageEntry.Hide()
-			text := entry.Text
-			numberToFactor, err := strconv.Atoi(text)
-			if appController.SelectedMethod == "" {
-				dialog.ShowInformation("No Method Selected", "Pleaes selecte a Method", w)
-				return
-			}
-			if err != nil {
-				dialog.ShowInformation("Non-number characters entered", "Pleaes enter valid numbers", w)
-				return
-			}
-			progressBar.Show()
-			cancelButton.Show()
-			appController.DoFactorization(numberToFactor)
-			go func() {
-				factors := <-appController.Done
-				fyne.Do(func() {
-					if appController.Running == false {
-						cancelButton.Hide()
-						progressBar.Hide()
-					}
-					if appController.BenchmarkOn == true {
-						canceledLabel.Hide()
-						resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s \nBenchmark Time: %v", appController.FactoredNumber, appController.LatestFactors, appController.SelectedMethod, appController.Duration))
-						fmt.Printf("\nTime to find Factors: %s\n", appController.Duration)
-					} else {
-						canceledLabel.Hide()
-						resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s", appController.FactoredNumber, factors, appController.SelectedMethod))
-					}
-					if len(factors) == 2 {
-						RsaButton.Show()
-					} else {
-						RsaButton.Hide()
-						messageEntry.Hide()
-
-					}
-					factorButtons.Refresh()
-				})
-				log.Println(appController.FactoredNumber)
-				log.Println(factors)
-				log.Println("Current method:", appController.SelectedMethod)
-			}()
-		}),
-		widget.NewButton("Clear", func() {
-			entry.SetText("")
-			appController.CurrentInputText = ("")
-			RsaButton.Hide()
-			messageEntry.Hide()
-		}),
-		cancelButton,
-		RsaButton,
-	)
 
 	entry.Text = appController.CurrentInputText
 
@@ -213,6 +227,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		container.NewVBox(resultLabel),
 		container.NewVBox(canceledLabel),
 		messageEntry,
+		encDecButton,
 	))
 
 	outputPanel := container.NewStack(
