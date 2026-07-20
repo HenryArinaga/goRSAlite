@@ -18,14 +18,27 @@ import (
 
 func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.CanvasObject {
 	var factorButtons *fyne.Container
+	messageEntry := widget.NewEntry()
+	resultEncDecLabel := widget.NewLabel("Encrypted text will appear here")
+	resultEncDecLabel.Hide()
 
 	encDecButton := container.NewHBox(
 		layout.NewSpacer(),
 		widget.NewButton("Encrypt / Decrypt", func() {
+			input := messageEntry.Text
+			go func() {
+				appController.DoEncrypt(input)
+				EncryptedText := <-appController.EncryptionDone
+				fyne.Do(func() {
+					resultEncDecLabel.Show()
+					resultEncDecLabel.SetText(fmt.Sprintf("Encypted Text: %v", EncryptedText))
+				})
+				log.Println(EncryptedText)
+			}()
 
 		}))
+
 	entry := widget.NewEntry()
-	messageEntry := widget.NewEntry()
 	entry.SetText(appController.CurrentInputText)
 	messageEntry.SetPlaceHolder("Enter a short message to encrpyt")
 	messageEntry.SetText(appController.CurrentMessageText)
@@ -36,7 +49,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 	}
 
 	messageEntry.OnChanged = func(newMessageText string) {
-		appController.CurrentInputText = newMessageText
+		appController.CurrentMessageText = newMessageText
 	}
 
 	titleLabel := container.New(
@@ -76,7 +89,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		layout.NewSpacer(),
 		widget.NewButton("RSA Demo", func() {
 			go func() {
-				appController.DoRsa(appController.Totient)
+				appController.DoRsa()
 				fyne.Do(func() {
 					resultText := fmt.Sprintf(
 						"RSA Values\nFactored number: %v \nP: %v, Q: %v\nEuler's Totient "+
@@ -121,8 +134,8 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 			}
 			progressBar.Show()
 			cancelButton.Show()
-			appController.DoFactorization(numberToFactor)
 			go func() {
+				appController.DoFactorization(numberToFactor)
 				factors := <-appController.Done
 				fyne.Do(func() {
 					if appController.Running == false {
@@ -131,7 +144,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 					}
 					if appController.BenchmarkOn == true {
 						canceledLabel.Hide()
-						resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s \nBenchmark Time: %v", appController.FactoredNumber, appController.LatestFactors, appController.SelectedMethod, appController.Duration))
+						resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s \nBenchmark Time: %v", appController.FactoredNumber, factors, appController.SelectedMethod, appController.Duration))
 						fmt.Printf("\nTime to find Factors: %s\n", appController.Duration)
 					} else {
 						canceledLabel.Hide()
@@ -228,6 +241,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		container.NewVBox(canceledLabel),
 		messageEntry,
 		encDecButton,
+		resultEncDecLabel,
 	))
 
 	outputPanel := container.NewStack(

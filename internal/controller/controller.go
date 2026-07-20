@@ -18,6 +18,7 @@ type Controller struct {
 	mu                 sync.Mutex
 	Running            bool
 	Done               chan []int
+	EncryptionDone     chan []int
 	ctx                context.Context
 	cancel             context.CancelFunc
 	Duration           time.Duration
@@ -29,7 +30,7 @@ type Controller struct {
 	RsaDuration        time.Duration
 	RsaRunning         bool
 	Encryption         int
-	ciphertext         []int
+	cipherText         []int
 	input              string
 	EncryptionDuration time.Duration
 }
@@ -102,7 +103,7 @@ func (appController *Controller) DoFactorization(numberToFactor int) {
 
 }
 
-func (appController *Controller) DoRsa(numberToFactor int) (int, int, int) {
+func (appController *Controller) DoRsa() (int, int, int) {
 	start := time.Now()
 	go func() {
 		appController.RsaRunning = true
@@ -115,21 +116,21 @@ func (appController *Controller) DoRsa(numberToFactor int) (int, int, int) {
 	return appController.Totient, appController.PublicExponent, appController.PrivateExponent
 }
 
-func (appController *Controller) DoEncrypt() []int {
+func (appController *Controller) DoEncrypt(input string) {
 	start := time.Now()
 	go func() {
 		appController.RsaRunning = true
 		n := appController.LatestFactors[0] * appController.LatestFactors[1]
-		appController.ciphertext = make([]int, 0, len(appController.input))
-		for i := 0; i < len(appController.input); i++ {
-			appController.ciphertext = append(
-				appController.ciphertext,
-				rsa.Encrypt(int(appController.input[i]),
+		appController.cipherText = make([]int, 0, len(input))
+		for i := 0; i < len(input); i++ {
+			appController.cipherText = append(
+				appController.cipherText,
+				rsa.Encrypt(int(input[i]),
 					appController.PublicExponent,
 					n))
 		}
+		appController.EncryptionDone <- appController.cipherText
 		appController.RsaRunning = false
 		appController.EncryptionDuration = time.Since(start)
 	}()
-	return appController.ciphertext
 }
