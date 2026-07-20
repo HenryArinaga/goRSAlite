@@ -23,9 +23,14 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 	messageEntry := widget.NewEntry()
 	entry.SetText(appController.CurrentInputText)
 	messageEntry.SetPlaceHolder("Enter a short message to encrpyt")
+	messageEntry.SetText(appController.CurrentMessageText)
 	messageEntry.Hide()
 	entry.OnChanged = func(newText string) {
 		appController.CurrentInputText = newText
+	}
+
+	messageEntry.OnChanged = func(newMessageText string) {
+		appController.CurrentInputText = newMessageText
 	}
 
 	titleLabel := container.New(
@@ -163,7 +168,6 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 					if appController.Running == false {
 						cancelButton.Hide()
 						progressBar.Hide()
-
 					}
 					if appController.BenchmarkOn == true {
 						canceledLabel.Hide()
@@ -181,7 +185,6 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 
 					}
 					factorButtons.Refresh()
-
 				})
 				log.Println(appController.FactoredNumber)
 				log.Println(factors)

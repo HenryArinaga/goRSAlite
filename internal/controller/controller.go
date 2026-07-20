@@ -13,6 +13,7 @@ type Controller struct {
 	BenchmarkOn        bool
 	SelectedMethod     string
 	CurrentInputText   string
+	CurrentMessageText string
 	LatestFactors      []int
 	mu                 sync.Mutex
 	Running            bool
