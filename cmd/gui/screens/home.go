@@ -20,6 +20,9 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 	var factorButtons *fyne.Container
 	messageEntry := widget.NewEntry()
 	resultEncDecLabel := widget.NewLabel("Encrypted text will appear here")
+	resultEncDecLabel.Wrapping = fyne.TextWrapWord
+	resultEncDecScroll := container.NewVScroll(resultEncDecLabel)
+	resultEncDecScroll.SetMinSize(fyne.NewSize(760, 150))
 	resultEncDecLabel.Hide()
 
 	encDecButton := container.NewHBox(
@@ -30,8 +33,8 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 				appController.DoEncrypt(input)
 				EncryptedText := <-appController.EncryptionDone
 				fyne.Do(func() {
-					resultEncDecLabel.Show()
 					resultEncDecLabel.SetText(fmt.Sprintf("Encypted Text: %v", EncryptedText))
+					resultEncDecLabel.Show()
 				})
 				log.Println(EncryptedText)
 			}()
@@ -122,6 +125,9 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		widget.NewButton("Factor", func() {
 			messageEntry.Hide()
 			encDecButton.Hide()
+			appController.CurrentMessageText = ("")
+			messageEntry.SetText("")
+			resultEncDecLabel.Hide()
 			text := entry.Text
 			numberToFactor, err := strconv.Atoi(text)
 			if appController.SelectedMethod == "" {
@@ -156,6 +162,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 						RsaButton.Hide()
 						messageEntry.Hide()
 						encDecButton.Hide()
+						resultEncDecLabel.Hide()
 
 					}
 					factorButtons.Refresh()
@@ -168,9 +175,14 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		widget.NewButton("Clear", func() {
 			entry.SetText("")
 			appController.CurrentInputText = ("")
+			messageEntry.SetText("")
 			RsaButton.Hide()
 			messageEntry.Hide()
 			encDecButton.Hide()
+			appController.CurrentMessageText = ("")
+			messageEntry.SetText("")
+			resultEncDecLabel.Hide()
+			resultLabel.SetText("Factors will be displayed here:")
 
 		}),
 		cancelButton,
@@ -181,6 +193,8 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		RsaButton.Show()
 		RsaButton.Refresh()
 	} else {
+		appController.CurrentMessageText = ("")
+		messageEntry.SetText("")
 		RsaButton.Hide()
 
 	}
@@ -241,7 +255,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		container.NewVBox(canceledLabel),
 		messageEntry,
 		encDecButton,
-		resultEncDecLabel,
+		resultEncDecScroll,
 	))
 
 	outputPanel := container.NewStack(
