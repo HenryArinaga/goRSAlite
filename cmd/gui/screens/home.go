@@ -32,9 +32,12 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 			go func() {
 				appController.DoEncrypt(input)
 				EncryptedText := <-appController.EncryptionDone
+				appController.DoDecrypt(appController.CurrentInputText)
+				DecryptedText := <-appController.DecryptionDone
 				fyne.Do(func() {
-					resultEncDecLabel.SetText(fmt.Sprintf("Encypted Text: %v", EncryptedText))
+					resultEncDecLabel.SetText(fmt.Sprintf("Encypted Text: %v\nDecrypted Text: %c\nNumber of decrypted bytes: %d\n", EncryptedText, DecryptedText, len(DecryptedText)))
 					resultEncDecLabel.Show()
+
 				})
 				log.Println(EncryptedText)
 			}()

@@ -143,7 +143,7 @@ func (appController *Controller) DoDecrypt(input string) {
 	go func() {
 		appController.RsaRunning = true
 		n := appController.LatestFactors[0] * appController.LatestFactors[1]
-
+		appController.DecryptedMessage = make([]int, 0, len(input))
 		for i := 0; i < len(appController.cipherText); i++ {
 			appController.DecryptedMessage = append(appController.DecryptedMessage,
 				rsa.Decrypt(appController.cipherText[i], appController.PrivateExponent, n))
