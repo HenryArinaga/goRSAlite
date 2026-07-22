@@ -19,6 +19,7 @@ type Controller struct {
 	Running            bool
 	Done               chan []int
 	EncryptionDone     chan []int
+	DecryptionDone     chan []int
 	ctx                context.Context
 	cancel             context.CancelFunc
 	Duration           time.Duration
@@ -33,6 +34,8 @@ type Controller struct {
 	cipherText         []int
 	input              string
 	EncryptionDuration time.Duration
+	DecryptionDuration time.Duration
+	DecryptedMessage   []int
 }
 
 func (CancelFunction *Controller) CancelRunningFunction() {
@@ -132,5 +135,25 @@ func (appController *Controller) DoEncrypt(input string) {
 		appController.EncryptionDone <- appController.cipherText
 		appController.RsaRunning = false
 		appController.EncryptionDuration = time.Since(start)
+	}()
+}
+
+func (appController *Controller) DoDecrypt(input string) {
+	start := time.Now()
+	go func() {
+		appController.RsaRunning = true
+		n := appController.LatestFactors[0] * appController.LatestFactors[1]
+
+		for i := 0; i < len(appController.cipherText); i++ {
+			appController.DecryptedMessage = append(appController.DecryptedMessage,
+				rsa.Decrypt(appController.cipherText[i], appController.PrivateExponent, n))
+		}
+		for i := 0; i < len(appController.DecryptedMessage); i++ {
+			fmt.Printf("%c", appController.DecryptedMessage[i])
+		}
+		appController.DecryptionDone <- appController.DecryptedMessage
+		appController.DecryptionDuration = time.Since(start)
+		appController.RsaRunning = false
+
 	}()
 }
