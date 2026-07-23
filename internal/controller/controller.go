@@ -36,6 +36,7 @@ type Controller struct {
 	EncryptionDuration time.Duration
 	DecryptionDuration time.Duration
 	DecryptedMessage   []int
+	SimdOn             bool
 }
 
 func (CancelFunction *Controller) CancelRunningFunction() {

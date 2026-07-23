@@ -39,7 +39,7 @@ func SettingsScreen(appController *controller.Controller) fyne.CanvasObject {
 
 	simdModeCheck := widget.NewCheck("SIMD Acceleration mode (coming soon)",
 		func(turnOnSimdMode bool) {
-
+			appController.SimdOn = turnOnSimdMode
 		})
 	recAppearance1 := canvas.NewRectangle(color.Black)
 	recAppearance1.SetMinSize(fyne.NewSize(500, 50))
