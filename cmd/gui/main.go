@@ -19,7 +19,7 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("GO RSA Lite")
 
-	appController := &controller.Controller{Done: make(chan []int), EncryptionDone: make(chan []int), DecryptionDone: make(chan []int)}
+	appController := &controller.Controller{Done: make(chan []int), EncryptionDone: make(chan []int), DecryptionDone: make(chan []int), RsaDone: make(chan controller.RSAResult)}
 
 	homescreen := screens.HomeScreen(w, appController)
 

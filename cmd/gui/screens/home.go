@@ -96,6 +96,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		widget.NewButton("RSA Demo", func() {
 			go func() {
 				appController.DoRsa()
+				result := <-appController.RsaDone
 				fyne.Do(func() {
 					resultText := fmt.Sprintf(
 						"RSA Values\nFactored number: %v \nP: %v, Q: %v\nEuler's Totient "+
@@ -104,12 +105,12 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 						appController.FactoredNumber,
 						appController.LatestFactors[0],
 						appController.LatestFactors[1],
-						appController.Totient,
-						appController.PublicExponent,
-						appController.PrivateExponent,
-						appController.PublicExponent,
+						result.Totient,
+						result.PublicExponent,
+						result.PrivateExponent,
+						result.PublicExponent,
 						appController.LatestFactors[0]*appController.LatestFactors[1],
-						appController.PrivateExponent,
+						result.PrivateExponent,
 						appController.LatestFactors[0]*appController.LatestFactors[1],
 					)
 					if appController.BenchmarkOn {

@@ -9,6 +9,12 @@ import (
 	"time"
 )
 
+type RSAResult struct {
+	Totient         int
+	PublicExponent  int
+	PrivateExponent int
+}
+
 type Controller struct {
 	BenchmarkOn        bool
 	SelectedMethod     string
@@ -20,6 +26,7 @@ type Controller struct {
 	Done               chan []int
 	EncryptionDone     chan []int
 	DecryptionDone     chan []int
+	RsaDone            chan RSAResult
 	ctx                context.Context
 	cancel             context.CancelFunc
 	Duration           time.Duration
@@ -107,17 +114,26 @@ func (appController *Controller) DoFactorization(numberToFactor int) {
 
 }
 
-func (appController *Controller) DoRsa() (int, int, int) {
+func (appController *Controller) DoRsa() {
 	start := time.Now()
 	go func() {
 		appController.RsaRunning = true
-		appController.Totient = rsa.Totient(appController.LatestFactors[0], appController.LatestFactors[1])
-		appController.PublicExponent = rsa.E(appController.Totient)
-		appController.PrivateExponent = rsa.D(appController.PublicExponent, appController.Totient)
-		appController.RsaRunning = false
+		totient := rsa.Totient(appController.LatestFactors[0], appController.LatestFactors[1])
+		publicExponent := rsa.E(totient)
+		privateExponent := rsa.D(publicExponent, totient)
+		appController.mu.Lock()
+		appController.Totient = totient
+		appController.PublicExponent = publicExponent
+		appController.PrivateExponent = privateExponent
 		appController.RsaDuration = time.Since(start)
+		appController.RsaRunning = false
+		appController.mu.Unlock()
+		appController.RsaDone <- RSAResult{
+			Totient:         totient,
+			PublicExponent:  publicExponent,
+			PrivateExponent: privateExponent,
+		}
 	}()
-	return appController.Totient, appController.PublicExponent, appController.PrivateExponent
 }
 
 func (appController *Controller) DoEncrypt(input string) {
