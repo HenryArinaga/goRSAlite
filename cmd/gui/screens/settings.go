@@ -41,6 +41,14 @@ func SettingsScreen(appController *controller.Controller) fyne.CanvasObject {
 		func(turnOnSimdMode bool) {
 			appController.SimdOn = turnOnSimdMode
 		})
+
+	extendedGcdCheck := widget.NewCheck("Extended Greated Common Denominator",
+		func(turnOnExtendedGcd bool) {
+			appController.ExtendedGcdOn = turnOnExtendedGcd
+		})
+	bottomTextextendedGcd := widget.NewLabel("Apply Extended GCD for a faster result at finding common denominators")
+	bottomTextextendedGcd.TextStyle.Italic = true
+
 	recAppearance1 := canvas.NewRectangle(color.Black)
 	recAppearance1.SetMinSize(fyne.NewSize(500, 50))
 
@@ -53,6 +61,10 @@ func SettingsScreen(appController *controller.Controller) fyne.CanvasObject {
 	recAppearance4 := canvas.NewRectangle(color.Black)
 	recAppearance4.SetMinSize(fyne.NewSize(500, 50))
 	simdModeCheck.Disable()
+
+	recAppearance5 := canvas.NewRectangle(color.Black)
+	recAppearance5.SetMinSize(fyne.NewSize(500, 50))
+	extendedGcdCheck.Disable()
 
 	optimizationSettings := widget.NewLabel("Optimization Settings")
 	optimizationSettings.TextStyle = fyne.TextStyle{Bold: true}
@@ -69,7 +81,11 @@ func SettingsScreen(appController *controller.Controller) fyne.CanvasObject {
 	simdRow := container.New(layout.NewStackLayout(), recAppearance4, simdModeCheck)
 	simdBox := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), simdRow, layout.NewSpacer())
 
-	centered1 := container.New(layout.NewVBoxLayout() /*appearanceBox,*/, benchmarkBox, sieveBox, simdBox, layout.NewSpacer())
+	ExtendedGcSubText := container.New(layout.NewVBoxLayout(), extendedGcdCheck, bottomTextextendedGcd)
+	ExtendedGcRow := container.New(layout.NewStackLayout(), recAppearance3, ExtendedGcSubText, layout.NewSpacer())
+	ExtendedGcBox := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), ExtendedGcRow, layout.NewSpacer())
+
+	centered1 := container.New(layout.NewVBoxLayout() /*appearanceBox,*/, benchmarkBox, sieveBox, simdBox, ExtendedGcBox, layout.NewSpacer())
 
 	limitSize := container.New(layout.NewHBoxLayout(), layout.NewSpacer(), centered1, layout.NewSpacer())
 	return limitSize
