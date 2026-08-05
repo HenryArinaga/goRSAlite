@@ -95,8 +95,10 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 		layout.NewSpacer(),
 		widget.NewButton("RSA Demo", func() {
 			go func() {
+				progressBar.Show()
 				appController.DoRsa()
 				result := <-appController.RsaDone
+				progressBar.Hide()
 				fyne.Do(func() {
 					resultText := fmt.Sprintf(
 						"RSA Values\nFactored number: %v \nP: %v, Q: %v\nEuler's Totient "+

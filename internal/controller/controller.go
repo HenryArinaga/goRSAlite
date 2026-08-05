@@ -119,14 +119,21 @@ func (appController *Controller) DoRsa() {
 	start := time.Now()
 	go func() {
 		appController.RsaRunning = true
+		t1 := time.Now()
 		totient := rsa.Totient(appController.LatestFactors[0], appController.LatestFactors[1])
-		publicExponent := rsa.E(totient)
-		privateExponent := rsa.D(publicExponent, totient)
+		fmt.Println("Totient took:", time.Since(t1), "value:", totient)
+		t2 := time.Now()
+		publicExponent := rsa.E(totient, appController.ExtendedGcdOn)
+		fmt.Println("E took:", time.Since(t2), "value:", publicExponent, "extended:", appController.ExtendedGcdOn)
+		t3 := time.Now()
+		privateExponent := rsa.D(publicExponent, totient, appController.ExtendedGcdOn)
+		fmt.Println("D took:", time.Since(t3), "value:", privateExponent)
 		appController.mu.Lock()
 		appController.Totient = totient
 		appController.PublicExponent = publicExponent
 		appController.PrivateExponent = privateExponent
 		appController.RsaDuration = time.Since(start)
+		fmt.Println("Total RSA time:", time.Since(start))
 		appController.RsaRunning = false
 		appController.mu.Unlock()
 		appController.RsaDone <- RSAResult{
