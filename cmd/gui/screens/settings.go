@@ -34,13 +34,18 @@ func SettingsScreen(appController *controller.Controller) fyne.CanvasObject {
 		sieveModeCheck.SetChecked(true)
 	}
 
-	bottomTextSieve := widget.NewLabel("Apply Sieve to find factors faster; Only usable with trial division")
+	bottomTextSieve := widget.NewLabel("Apply Sieve to find factors faster: Only usable with trial division")
 	bottomTextSieve.TextStyle.Italic = true
 
-	simdModeCheck := widget.NewCheck("SIMD Acceleration mode (coming soon)",
+	simdModeCheck := widget.NewCheck("SIMD Acceleration mode (Expirmental)",
 		func(turnOnSimdMode bool) {
 			appController.SimdOn = turnOnSimdMode
 		})
+	if appController.SimdOn == true {
+		simdModeCheck.SetChecked(true)
+	}
+	bottomTextSIMD := widget.NewLabel("Apply a small SIMD like batching operation: Only usable with trial division ")
+	bottomTextSIMD.TextStyle.Italic = true
 
 	extendedGcdCheck := widget.NewCheck("Extended Greated Common Denominator",
 		func(turnOnExtendedGcd bool) {
@@ -55,6 +60,7 @@ func SettingsScreen(appController *controller.Controller) fyne.CanvasObject {
 	if appController.ExtendedGcdOn == true {
 		extendedGcdCheck.SetChecked(true)
 	}
+
 	bottomTextextendedGcd := widget.NewLabel("Apply Extended GCD for a faster result at finding common denominators")
 	bottomTextextendedGcd.TextStyle.Italic = true
 
@@ -69,7 +75,6 @@ func SettingsScreen(appController *controller.Controller) fyne.CanvasObject {
 
 	recAppearance4 := canvas.NewRectangle(color.Black)
 	recAppearance4.SetMinSize(fyne.NewSize(500, 50))
-	simdModeCheck.Disable()
 
 	recAppearance5 := canvas.NewRectangle(color.Black)
 	recAppearance5.SetMinSize(fyne.NewSize(500, 50))
@@ -86,7 +91,8 @@ func SettingsScreen(appController *controller.Controller) fyne.CanvasObject {
 	sieveRow := container.New(layout.NewStackLayout(), recAppearance3, sieveSubText, layout.NewSpacer())
 	sieveBox := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), sieveRow, layout.NewSpacer())
 
-	simdRow := container.New(layout.NewStackLayout(), recAppearance4, simdModeCheck)
+	simdSubText := container.New(layout.NewVBoxLayout(), simdModeCheck, bottomTextSIMD)
+	simdRow := container.New(layout.NewStackLayout(), recAppearance4, simdSubText)
 	simdBox := container.New(layout.NewVBoxLayout(), layout.NewSpacer(), simdRow, layout.NewSpacer())
 
 	ExtendedGcdSubText := container.New(layout.NewVBoxLayout(), extendedGcdCheck, bottomTextextendedGcd)

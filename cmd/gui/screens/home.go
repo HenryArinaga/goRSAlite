@@ -94,12 +94,14 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 	RsaButton := container.NewHBox(
 		layout.NewSpacer(),
 		widget.NewButton("RSA Demo", func() {
+			progressBar.Show()
+			messageEntry.Show()
+			encDecButton.Show()
 			go func() {
-				progressBar.Show()
 				appController.DoRsa()
 				result := <-appController.RsaDone
-				progressBar.Hide()
 				fyne.Do(func() {
+					progressBar.Hide()
 					resultText := fmt.Sprintf(
 						"RSA Values\nFactored number: %v \nP: %v, Q: %v\nEuler's Totient "+
 							"%v\nPublic Exponent e: %v\nPrivate Exponent d: %v"+
@@ -118,11 +120,11 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 					if appController.BenchmarkOn {
 						resultText += fmt.Sprintf("\nBenchmark Time: %v", appController.RsaDuration)
 					}
+					progressBar.Hide()
 					resultLabel.SetText(resultText)
 				})
 			}()
-			messageEntry.Show()
-			encDecButton.Show()
+
 		}))
 
 	// create the same buttons in the same container

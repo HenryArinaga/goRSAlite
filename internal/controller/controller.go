@@ -63,8 +63,24 @@ func (appController *Controller) DoFactorization(numberToFactor int) {
 		appController.Running = true
 		start := time.Now()
 		go func() {
-			if appController.SieveOn == true {
+			if appController.SimdOn && appController.SieveOn == true {
 				factorization.FactorTrialDivisionSieve(numberToFactor, factorResult, appController.ctx)
+				factors := <-factorResult
+				appController.mu.Lock()
+				appController.LatestFactors = factors
+				appController.mu.Unlock()
+				appController.Duration = time.Since(start)
+				appController.Running = false
+			} else if appController.SieveOn == true {
+				factorization.FactorTrialDivisionSIMD(numberToFactor, factorResult, appController.ctx)
+				factors := <-factorResult
+				appController.mu.Lock()
+				appController.LatestFactors = factors
+				appController.mu.Unlock()
+				appController.Duration = time.Since(start)
+				appController.Running = false
+			} else if appController.SimdOn == true {
+				factorization.FactorTrialDivisionSieveSIMD(numberToFactor, factorResult, appController.ctx)
 				factors := <-factorResult
 				appController.mu.Lock()
 				appController.LatestFactors = factors
