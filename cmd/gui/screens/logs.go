@@ -11,7 +11,10 @@ import (
 
 func LogsScreen(appController *controller.Controller) fyne.CanvasObject {
 
-	inside := container.New(layout.NewVBoxLayout(), widget.NewLabel("this is the logs screen"))
+	logsHeading1 := widget.NewLabel("Operaration Histroy")
+	logsHeading1.TextStyle = fyne.TextStyle{Bold: true}
+	logsCentered := container.New(layout.NewCenterLayout(), logsHeading1)
+	display := container.New(layout.NewVBoxLayout(), logsCentered)
 
-	return inside
+	return display
 }
