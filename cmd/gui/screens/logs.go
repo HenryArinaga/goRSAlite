@@ -49,8 +49,15 @@ func LogsScreen(appController *controller.Controller) (fyne.CanvasObject, func()
 		fmt.Println("saved offset:", pos)
 
 	}
+	clearButton := container.New(layout.NewHBoxLayout(),
+		widget.NewButton("Clear", func() {
+			appController.History = nil
+			refreshLogs()
+		}),
+	)
+	topRow := container.NewBorder(nil, nil, nil, clearButton)
 
-	centered := container.New(layout.NewVBoxLayout(), display, scroll, layout.NewSpacer())
+	centered := container.New(layout.NewVBoxLayout(), display, scroll, topRow, layout.NewSpacer())
 
 	return centered, refreshLogs
 }
