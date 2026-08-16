@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"log"
+	"time"
 
 	"goRSAlite/internal/controller"
 	"strconv"
@@ -158,11 +159,45 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 					}
 					if appController.BenchmarkOn == true {
 						canceledLabel.Hide()
-						resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s \nBenchmark Time: %v", appController.FactoredNumber, factors, appController.SelectedMethod, appController.Duration))
+						resultText := fmt.Sprintf("Factors: %v", factors)
+						displayText := fmt.Sprintf(
+							"Factored number: %v \n%s \nMethod: %s \nBenchmark Time: %v",
+							appController.FactoredNumber,
+							resultText,
+							appController.SelectedMethod,
+							appController.Duration,
+						)
+						resultLabel.SetText(resultText)
+						resultLabel.SetText(displayText)
+
+						appController.History = append(appController.History, controller.LogEntry{
+							Time:     time.Now(),
+							Kind:     "Factorization",
+							Input:    text,
+							Result:   resultText,
+							Method:   appController.SelectedMethod,
+							Duration: appController.Duration,
+						})
 						fmt.Printf("\nTime to find Factors: %s\n", appController.Duration)
 					} else {
 						canceledLabel.Hide()
-						resultLabel.SetText(fmt.Sprintf("Factored number: %v \nFactors: %v \nMethod: %s", appController.FactoredNumber, factors, appController.SelectedMethod))
+						resultText := fmt.Sprintf("Factors: %v", factors)
+						displayText := fmt.Sprintf(
+							"Factored number: %v \n%s \nMethod: %s",
+							appController.FactoredNumber,
+							resultText,
+							appController.SelectedMethod,
+						)
+						resultLabel.SetText(resultText)
+						resultLabel.SetText(displayText)
+						appController.History = append(appController.History, controller.LogEntry{
+							Time:     time.Now(),
+							Kind:     "Factorization",
+							Input:    text,
+							Result:   resultText,
+							Method:   appController.SelectedMethod,
+							Duration: appController.Duration,
+						})
 					}
 					if len(factors) == 2 {
 						RsaButton.Show()
@@ -179,6 +214,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 				log.Println(factors)
 				log.Println("Current method:", appController.SelectedMethod)
 			}()
+
 		}),
 		widget.NewButton("Clear", func() {
 			entry.SetText("")

@@ -15,6 +15,15 @@ type RSAResult struct {
 	PrivateExponent int
 }
 
+type LogEntry struct {
+	Time     time.Time
+	Kind     string
+	Input    string
+	Result   string
+	Method   string
+	Duration time.Duration
+}
+
 type Controller struct {
 	BenchmarkOn        bool
 	SelectedMethod     string
@@ -45,6 +54,7 @@ type Controller struct {
 	DecryptedMessage   []int
 	SimdOn             bool
 	ExtendedGcdOn      bool
+	History            []LogEntry
 }
 
 func (CancelFunction *Controller) CancelRunningFunction() {
@@ -97,6 +107,7 @@ func (appController *Controller) DoFactorization(numberToFactor int) {
 				appController.Running = false
 			}
 			appController.Done <- appController.LatestFactors
+
 		}()
 	case "Square Root":
 		appController.Running = true
