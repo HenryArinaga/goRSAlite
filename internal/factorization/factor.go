@@ -189,9 +189,11 @@ func FactorSqrt(number_to_factor int, factorResult chan []int, ctx context.Conte
 
 }
 
-func FactorFermat(number_to_factor int, ctx context.Context) []int {
+func FactorFermat(numberToFactor int, ctx context.Context) []int {
+	if numberToFactor <= 1 {
+		return []int{}
+	}
 
-	factor_array := make([]int, 0)
 	select {
 	case <-ctx.Done():
 		fmt.Println("Ctx cancelled")
@@ -199,20 +201,39 @@ func FactorFermat(number_to_factor int, ctx context.Context) []int {
 	default:
 	}
 
-	a := int(math.Ceil(math.Sqrt(float64(number_to_factor))))
-	var bSquared int
-
-	if number_to_factor <= 1 {
-		return []int{}
+	if IsPrime(numberToFactor) {
+		return []int{numberToFactor}
 	}
 
-	if IsPrime(number_to_factor) {
-		return []int{number_to_factor}
+	// Fermat only works directly with odd numbers.
+	if numberToFactor%2 == 0 {
+		return append(
+			[]int{2},
+			FactorFermat(numberToFactor/2, ctx)...,
+		)
 	}
 
-	if number_to_factor%2 == 0 {
-		return append([]int{2}, FactorFermat(number_to_factor/2, ctx)...)
+	// Remove small factors first.
+	// This prevents Fermat from taking billions of iterations
+	// when the factors are extremely far apart.
+	smallPrimes := []int{
+		3, 5, 7, 11, 13, 17, 19,
+		23, 29, 31, 37, 41, 43, 47,
 	}
+
+	for _, prime := range smallPrimes {
+		if numberToFactor%prime == 0 {
+			return append(
+				[]int{prime},
+				FactorFermat(numberToFactor/prime, ctx)...,
+			)
+		}
+	}
+
+	a := int(math.Ceil(math.Sqrt(float64(numberToFactor))))
+
+	// Largest int value on the current architecture.
+	maxInt := int(^uint(0) >> 1)
 
 	for {
 		select {
@@ -222,22 +243,31 @@ func FactorFermat(number_to_factor int, ctx context.Context) []int {
 		default:
 		}
 
-		bSquared = a*a - number_to_factor
+		// Prevent a*a from overflowing.
+		if a > maxInt/a {
+			fmt.Println("Fermat stopped: integer overflow")
+			return []int{}
+		}
 
-		sqrt_b := math.Sqrt(float64(bSquared))
-		if sqrt_b == float64(int(sqrt_b)) {
-			left := a - int(sqrt_b)
-			right := a + int(sqrt_b)
+		bSquared := a*a - numberToFactor
+
+		sqrtB := int(math.Sqrt(float64(bSquared)))
+
+		// Check for a perfect square using integer arithmetic.
+		if sqrtB*sqrtB == bSquared {
+			left := a - sqrtB
+			right := a + sqrtB
 
 			leftFactors := FactorFermat(left, ctx)
 			rightFactors := FactorFermat(right, ctx)
-			factor_array = append(factor_array, leftFactors...)
-			factor_array = append(factor_array, rightFactors...)
-			break
+
+			factors := make([]int, 0)
+			factors = append(factors, leftFactors...)
+			factors = append(factors, rightFactors...)
+
+			return factors
 		}
-		a = a + 1
 
+		a++
 	}
-
-	return factor_array
 }
