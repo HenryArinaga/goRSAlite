@@ -7,6 +7,8 @@ import (
 	"goRSAlite/internal/rsa"
 	"sync"
 	"time"
+
+	"fyne.io/fyne/v2"
 )
 
 type RSAResult struct {
@@ -16,12 +18,15 @@ type RSAResult struct {
 }
 
 type LogEntry struct {
-	Time     time.Time
-	Kind     string
-	Input    string
-	Result   string
-	Method   string
-	Duration time.Duration
+	Time        time.Time
+	Kind        string
+	Input       string
+	Result      string
+	Method      string
+	Duration    time.Duration
+	Sieve       bool
+	SIMD        bool
+	ExtendedGcd bool
 }
 
 type Controller struct {
@@ -55,6 +60,7 @@ type Controller struct {
 	SimdOn             bool
 	ExtendedGcdOn      bool
 	History            []LogEntry
+	LogsScrollOffset   fyne.Position
 }
 
 func (CancelFunction *Controller) CancelRunningFunction() {

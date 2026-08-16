@@ -21,7 +21,9 @@ func main() {
 
 	appController := &controller.Controller{Done: make(chan []int), EncryptionDone: make(chan []int), DecryptionDone: make(chan []int), RsaDone: make(chan controller.RSAResult)}
 
-	homescreen := screens.HomeScreen(w, appController)
+	homeScreen := screens.HomeScreen(w, appController)
+
+	logsScreen, refreshLogs := screens.LogsScreen(appController)
 
 	centerTop := container.New(layout.NewCenterLayout(), canvas.NewText("Welcome to the RSA Factorization Tool!", color.White))
 
@@ -29,11 +31,11 @@ func main() {
 
 	topBar := container.NewBorder(nil, nil, nil, rightTop, centerTop)
 
-	centerContent := container.New(layout.NewStackLayout(), homescreen)
+	centerContent := container.New(layout.NewStackLayout(), homeScreen)
 
 	HomeButton := widget.NewButtonWithIcon("Home", theme.HomeIcon(), func() {
 		log.Println("tapped")
-		centerContent.Objects = []fyne.CanvasObject{homescreen}
+		centerContent.Objects = []fyne.CanvasObject{homeScreen}
 		centerContent.Refresh()
 	})
 	MethodsButton := widget.NewButtonWithIcon("Methods", theme.ComputerIcon(), func() {
@@ -47,8 +49,9 @@ func main() {
 		centerContent.Refresh()
 	})
 	LogsButton := widget.NewButton("Logs", func() {
+		refreshLogs()
 		log.Println("Logs tapped")
-		centerContent.Objects = []fyne.CanvasObject{screens.LogsScreen(appController)}
+		centerContent.Objects = []fyne.CanvasObject{logsScreen}
 		centerContent.Refresh()
 	})
 

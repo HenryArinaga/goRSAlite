@@ -37,7 +37,7 @@ func SettingsScreen(appController *controller.Controller) fyne.CanvasObject {
 	bottomTextSieve := widget.NewLabel("Apply Sieve to find factors faster: Only usable with trial division")
 	bottomTextSieve.TextStyle.Italic = true
 
-	simdModeCheck := widget.NewCheck("SIMD Acceleration mode (Expirmental)",
+	simdModeCheck := widget.NewCheck("SIMD Acceleration mode (Experimental)",
 		func(turnOnSimdMode bool) {
 			appController.SimdOn = turnOnSimdMode
 		})

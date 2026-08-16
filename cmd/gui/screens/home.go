@@ -36,10 +36,23 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 				appController.DoDecrypt(appController.CurrentInputText)
 				DecryptedText := <-appController.DecryptionDone
 				fyne.Do(func() {
-					resultEncDecLabel.SetText(fmt.Sprintf("Encypted Text: %v\nDecrypted Text: %c\nNumber of decrypted bytes: %d\n", EncryptedText, DecryptedText, len(DecryptedText)))
+					resultText := fmt.Sprintf("Encypted Text: %v\nDecrypted Text: %c\nNumber of decrypted bytes: %d", EncryptedText, DecryptedText, len(DecryptedText))
 					resultEncDecLabel.Show()
+					resultEncDecLabel.SetText(resultText)
+					appController.History = append(appController.History, controller.LogEntry{
+						Time:        time.Now(),
+						Kind:        "Encrypt / Decrypt",
+						Input:       fmt.Sprintf("%d", appController.FactoredNumber),
+						Result:      resultText,
+						Method:      appController.SelectedMethod,
+						Duration:    appController.EncryptionDuration,
+						Sieve:       appController.SieveOn,
+						SIMD:        appController.SimdOn,
+						ExtendedGcd: appController.ExtendedGcdOn,
+					})
 
 				})
+
 				log.Println(EncryptedText)
 			}()
 
@@ -123,6 +136,17 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 					}
 					progressBar.Hide()
 					resultLabel.SetText(resultText)
+					appController.History = append(appController.History, controller.LogEntry{
+						Time:        time.Now(),
+						Kind:        "RSA Demo",
+						Input:       fmt.Sprintf("%d", appController.FactoredNumber),
+						Result:      resultText,
+						Method:      appController.SelectedMethod,
+						Duration:    appController.RsaDuration,
+						Sieve:       appController.SieveOn,
+						SIMD:        appController.SimdOn,
+						ExtendedGcd: appController.ExtendedGcdOn,
+					})
 				})
 			}()
 
@@ -169,14 +193,16 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 						)
 						resultLabel.SetText(resultText)
 						resultLabel.SetText(displayText)
-
 						appController.History = append(appController.History, controller.LogEntry{
-							Time:     time.Now(),
-							Kind:     "Factorization",
-							Input:    text,
-							Result:   resultText,
-							Method:   appController.SelectedMethod,
-							Duration: appController.Duration,
+							Time:        time.Now(),
+							Kind:        "Factorization",
+							Input:       text,
+							Result:      resultText,
+							Method:      appController.SelectedMethod,
+							Duration:    appController.Duration,
+							Sieve:       appController.SieveOn,
+							SIMD:        appController.SimdOn,
+							ExtendedGcd: appController.ExtendedGcdOn,
 						})
 						fmt.Printf("\nTime to find Factors: %s\n", appController.Duration)
 					} else {
@@ -191,12 +217,15 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 						resultLabel.SetText(resultText)
 						resultLabel.SetText(displayText)
 						appController.History = append(appController.History, controller.LogEntry{
-							Time:     time.Now(),
-							Kind:     "Factorization",
-							Input:    text,
-							Result:   resultText,
-							Method:   appController.SelectedMethod,
-							Duration: appController.Duration,
+							Time:        time.Now(),
+							Kind:        "Factorization",
+							Input:       text,
+							Result:      resultText,
+							Method:      appController.SelectedMethod,
+							Duration:    appController.Duration,
+							Sieve:       appController.SieveOn,
+							SIMD:        appController.SimdOn,
+							ExtendedGcd: appController.ExtendedGcdOn,
 						})
 					}
 					if len(factors) == 2 {
