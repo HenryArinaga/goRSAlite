@@ -23,13 +23,11 @@ func main() {
 
 	homeScreen := screens.HomeScreen(w, appController)
 
-	logsScreen, refreshLogs := screens.LogsScreen(appController)
+	logsScreen, refreshLogs := screens.LogsScreen(w, appController)
 
 	centerTop := container.New(layout.NewCenterLayout(), canvas.NewText("Welcome to the RSA Factorization Tool!", color.White))
 
-	rightTop := container.New(layout.NewHBoxLayout(), widget.NewLabel("Right Top"))
-
-	topBar := container.NewBorder(nil, nil, nil, rightTop, centerTop)
+	topBar := container.NewBorder(nil, nil, nil, nil, centerTop)
 
 	centerContent := container.New(layout.NewStackLayout(), homeScreen)
 

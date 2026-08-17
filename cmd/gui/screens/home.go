@@ -36,7 +36,7 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 				appController.DoDecrypt(appController.CurrentInputText)
 				DecryptedText := <-appController.DecryptionDone
 				fyne.Do(func() {
-					resultText := fmt.Sprintf("Encypted Text: %v\nDecrypted Text: %c\nNumber of decrypted bytes: %d", EncryptedText, DecryptedText, len(DecryptedText))
+					resultText := fmt.Sprintf("Encrypted Text: %v\nDecrypted Text: %c\nNumber of decrypted bytes: %d", EncryptedText, DecryptedText, len(DecryptedText))
 					resultEncDecLabel.Show()
 					resultEncDecLabel.SetText(resultText)
 					appController.History = append(appController.History, controller.LogEntry{
@@ -164,11 +164,11 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 			text := entry.Text
 			numberToFactor, err := strconv.Atoi(text)
 			if appController.SelectedMethod == "" {
-				dialog.ShowInformation("No Method Selected", "Pleaes selecte a Method", w)
+				dialog.ShowInformation("No Method Selected", "Please select a Method", w)
 				return
 			}
 			if err != nil {
-				dialog.ShowInformation("Non-number characters entered", "Pleaes enter valid numbers", w)
+				dialog.ShowInformation("Non-number characters entered", "Please enter valid numbers", w)
 				return
 			}
 			progressBar.Show()

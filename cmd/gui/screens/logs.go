@@ -2,6 +2,7 @@ package screens
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"goRSAlite/internal/controller"
 	"log"
@@ -14,9 +15,29 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func LogsScreen(appController *controller.Controller) (fyne.CanvasObject, func()) {
+type Result struct {
+	Time        string `json:"Time"`
+	Kind        string `json:"Kind"`
+	Input       string `json:"Input"`
+	Result      string `json:"Result"`
+	Method      string `json:"Method"`
+	Duration    string `json:"Duration"`
+	Sieve       bool   `json:"Sieve"`
+	SIMD        bool   `json:"SIMD"`
+	ExtendedGcd bool   `json:"ExtendedGcd"`
+}
 
-	logsHeading1 := widget.NewLabel("Operaration History")
+func LogsScreen(w fyne.Window, appController *controller.Controller) (fyne.CanvasObject, func()) {
+
+	var saveAlert *widget.PopUp
+	saveAlertBox := container.NewVBox(
+		widget.NewLabel("Operations Saved Successfully"),
+		widget.NewButton("Close", func() {
+			saveAlert.Hide()
+		}),
+	)
+
+	logsHeading1 := widget.NewLabel("Operation History")
 	logsHeading1.TextStyle = fyne.TextStyle{Bold: true}
 	logsCentered := container.New(layout.NewCenterLayout(), logsHeading1)
 	display := container.New(layout.NewVBoxLayout(), logsCentered)
@@ -50,8 +71,6 @@ func LogsScreen(appController *controller.Controller) (fyne.CanvasObject, func()
 
 	scroll.OnScrolled = func(pos fyne.Position) {
 		appController.LogsScrollOffset = pos
-		fmt.Println("saved offset:", pos)
-
 	}
 	clearButton := container.New(layout.NewHBoxLayout(),
 		widget.NewButton("Clear", func() {
@@ -81,7 +100,7 @@ func LogsScreen(appController *controller.Controller) (fyne.CanvasObject, func()
 			// Write data rows
 			records := [][]string{}
 			for _, entry := range appController.History {
-				row := []string{entry.Time.Format("15:04:05"),
+				row := []string{entry.Time.Format("2006-01-02 15:04:05"),
 					entry.Kind,
 					entry.Input,
 					entry.Result,
@@ -95,11 +114,44 @@ func LogsScreen(appController *controller.Controller) (fyne.CanvasObject, func()
 			if err := writer.WriteAll(records); err != nil {
 				log.Fatal(err)
 			}
+			saveAlert = widget.NewModalPopUp(saveAlertBox, w.Canvas())
+
+			saveAlert.Show()
 		}),
 	)
+
 	JsonButton := container.New(layout.NewHBoxLayout(),
 		widget.NewButton("Export JSON", func() {
+			results := []Result{}
+			for _, entry := range appController.History {
+				result := Result{
+					Time:        entry.Time.Format("2006-01-02 15:04:05"),
+					Kind:        entry.Kind,
+					Input:       entry.Input,
+					Result:      entry.Result,
+					Method:      entry.Method,
+					Duration:    entry.Duration.String(),
+					Sieve:       entry.Sieve,
+					SIMD:        entry.SIMD,
+					ExtendedGcd: entry.ExtendedGcd,
+				}
+				results = append(results, result)
+			}
 
+			jsonData, err := json.MarshalIndent(results, "", "  ")
+			if err != nil {
+				fmt.Println("Error marshaling JSON:", err)
+				return
+			}
+			err = os.WriteFile("output.json", jsonData, 0644)
+			if err != nil {
+				fmt.Println("Error writing file:", err)
+				return
+			}
+
+			fmt.Println("JSON file exported successfully.")
+			saveAlert = widget.NewModalPopUp(saveAlertBox, w.Canvas())
+			saveAlert.Show()
 		}),
 	)
 
