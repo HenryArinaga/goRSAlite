@@ -26,6 +26,9 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 	resultEncDecScroll.SetMinSize(fyne.NewSize(760, 150))
 	resultEncDecLabel.Hide()
 
+	resultLabel := widget.NewLabel("The Factors are: ")
+	resultLabel.Wrapping = fyne.TextWrapWord
+
 	encDecButton := container.NewHBox(
 		layout.NewSpacer(),
 		widget.NewButton("Encrypt / Decrypt", func() {
@@ -36,6 +39,14 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 				appController.DoDecrypt(appController.CurrentInputText)
 				DecryptedText := <-appController.DecryptionDone
 				fyne.Do(func() {
+					for i := 0; i < len(messageEntry.Text); i++ {
+						if int(messageEntry.Text[i]) >= appController.FactoredNumber || int(messageEntry.Text[i]) <= 0 {
+							fmt.Printf("Message byte %d must satisfy 0 < byte < n for RSA encryption.\n", messageEntry.Text[i])
+							messageLenWarning := fmt.Sprintf("The number you have chosen for the RSA demo is too small for encryption/decryption for the message you want to use ")
+							resultLabel.SetText(messageLenWarning)
+							return
+						}
+					}
 					resultText := fmt.Sprintf("Encrypted Text: %v\nDecrypted Text: %c\nNumber of decrypted bytes: %d", EncryptedText, DecryptedText, len(DecryptedText))
 					resultEncDecLabel.Show()
 					resultEncDecLabel.SetText(resultText)
@@ -88,9 +99,6 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 	progressBar := widget.NewProgressBarInfinite()
 	progressBar.Hide()
 
-	resultLabel := widget.NewLabel("The Factors are: ")
-	resultLabel.Wrapping = fyne.TextWrapWord
-
 	entry.Text = appController.CurrentInputText
 
 	canceledLabel := widget.NewLabel("Operation Canceled!")
@@ -134,7 +142,6 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 					if appController.BenchmarkOn {
 						resultText += fmt.Sprintf("\nBenchmark Time: %v", appController.RsaDuration)
 					}
-					progressBar.Hide()
 					resultLabel.SetText(resultText)
 					appController.History = append(appController.History, controller.LogEntry{
 						Time:        time.Now(),
@@ -191,7 +198,10 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 							appController.SelectedMethod,
 							appController.Duration,
 						)
-						resultLabel.SetText(resultText)
+						if len(factors) != 2 {
+							displayText += fmt.Sprintf("\nRSA Demo requires exactly two prime factors")
+
+						}
 						resultLabel.SetText(displayText)
 						appController.History = append(appController.History, controller.LogEntry{
 							Time:        time.Now(),
@@ -214,7 +224,10 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 							resultText,
 							appController.SelectedMethod,
 						)
-						resultLabel.SetText(resultText)
+						if len(factors) != 2 {
+							displayText += fmt.Sprintf("\nRSA Demo requires exactly two prime factors")
+
+						}
 						resultLabel.SetText(displayText)
 						appController.History = append(appController.History, controller.LogEntry{
 							Time:        time.Now(),
@@ -235,7 +248,6 @@ func HomeScreen(w fyne.Window, appController *controller.Controller) fyne.Canvas
 						messageEntry.Hide()
 						encDecButton.Hide()
 						resultEncDecLabel.Hide()
-
 					}
 					factorButtons.Refresh()
 				})
