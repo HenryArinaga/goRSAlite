@@ -1,8 +1,12 @@
 package screens
 
 import (
+	"encoding/csv"
 	"fmt"
 	"goRSAlite/internal/controller"
+	"log"
+	"os"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -55,8 +59,51 @@ func LogsScreen(appController *controller.Controller) (fyne.CanvasObject, func()
 			refreshLogs()
 		}),
 	)
-	topRow := container.NewBorder(nil, nil, nil, clearButton)
 
+	CsvButton := container.New(layout.NewHBoxLayout(),
+		widget.NewButton("Export CSV", func() {
+			file, err := os.Create("output.csv")
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer file.Close()
+
+			// Create a CSV writer
+			writer := csv.NewWriter(file)
+			defer writer.Flush()
+
+			// Write header
+			header := []string{"Time", "Kind", "Input", "Result", "Method", "Duration", "Sieve", "SIMD", "ExtendedGcd"}
+			if err := writer.Write(header); err != nil {
+				log.Fatal(err)
+			}
+
+			// Write data rows
+			records := [][]string{}
+			for _, entry := range appController.History {
+				row := []string{entry.Time.Format("15:04:05"),
+					entry.Kind,
+					entry.Input,
+					entry.Result,
+					entry.Method,
+					entry.Duration.String(),
+					strconv.FormatBool(entry.Sieve),
+					strconv.FormatBool(entry.SIMD),
+					strconv.FormatBool(entry.ExtendedGcd)}
+				records = append(records, row)
+			}
+			if err := writer.WriteAll(records); err != nil {
+				log.Fatal(err)
+			}
+		}),
+	)
+	JsonButton := container.New(layout.NewHBoxLayout(),
+		widget.NewButton("Export JSON", func() {
+
+		}),
+	)
+
+	topRow := container.NewBorder(nil, nil, nil, clearButton, container.NewHBox(CsvButton, JsonButton))
 	centered := container.New(layout.NewVBoxLayout(), display, scroll, topRow, layout.NewSpacer())
 
 	return centered, refreshLogs

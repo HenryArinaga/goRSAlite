@@ -86,12 +86,24 @@ func rsa_message(factor_Result []int, input string) {
 		fmt.Scanln(&calculate_rsa)
 		switch calculate_rsa {
 		case 1:
+			fmt.Println("Enter 1 to use the Extended GCD Enter 2 to use Brute Force ")
+			var useExtendedChoice int
+			var useExtended bool
+			fmt.Scanln(&useExtendedChoice)
+			if useExtendedChoice == 1 {
+				useExtended = true
+			} else if useExtendedChoice == 2 {
+				useExtended = false
+			} else {
+				fmt.Println("Please enter a valid number")
+				return
+			}
 			start := time.Now()
 			p := factor_Result[0]
 			q := factor_Result[1]
 			totient := rsa.Totient(p, q)
-			e := rsa.E(totient)
-			d := rsa.D(e, totient)
+			e := rsa.E(totient, useExtended)
+			d := rsa.D(e, totient, useExtended)
 			if p == q {
 				fmt.Println("Both factors are the same, number is not a product of" +
 					"" + "two distinct primes, cannot compute RSA keys.")

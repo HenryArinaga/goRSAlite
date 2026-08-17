@@ -1,0 +1,28 @@
+Time,Kind,Input,Result,Method,Duration,Sieve,SIMD,ExtendedGcd
+18:21:34,Factorization,4234234,Factors: [2 41 51637],Trial Division,614.94µs,false,false,false
+18:21:37,Factorization,42342343,Factors: [97 113 3863],Trial Division,64.92µs,false,false,false
+18:21:39,Factorization,423423432,Factors: [2 2 2 3 3 29 149 1361],Trial Division,21.59µs,false,false,false
+18:21:40,Factorization,4234234321,Factors: [44351 95471],Trial Division,876.29µs,false,false,false
+18:21:49,Factorization,4234234321,Factors: [44351 95471],Trial Division,269.49µs,true,true,true
+18:21:50,RSA Demo,4234234321,"RSA Values
+Factored number: 4234234321 
+P: 44351, Q: 95471
+Euler's Totient 4234094500
+Public Exponent e: 3
+Private Exponent d: 2822729667
+Public Key: (3 , 4234234321)
+Private Key: (2822729667, 4234234321)
+Benchmark Time: 112.78µs",Trial Division,112.78µs,true,true,true
+18:21:52,RSA Demo,4234234321,"RSA Values
+Factored number: 4234234321 
+P: 44351, Q: 95471
+Euler's Totient 4234094500
+Public Exponent e: 3
+Private Exponent d: 2822729667
+Public Key: (3 , 4234234321)
+Private Key: (2822729667, 4234234321)
+Benchmark Time: 10.283977987s",Trial Division,10.283977987s,true,true,true
+18:21:52,Encrypt / Decrypt,4234234321,"Encypted Text: [1061208 1030301 912673 1061208 912673]
+Decrypted Text: [f e a f a]
+Number of decrypted bytes: 5",Trial Division,36.64µs,true,true,true
+18:22:18,Factorization,4234234321,Factors: [44351 95471],Trial Division,357.411µs,true,true,true
