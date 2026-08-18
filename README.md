@@ -1,6 +1,6 @@
 # goRSAlite
 
-goRSAlite is a lightweight RSA and integer factorization tool written in Go. It includes both a command-line interface and a Fyne-based desktop GUI for experimenting with factorization methods, RSA key generation, encryption, and decryption.
+goRSAlite is a lightweight RSA and integer factorization tool written in Go. It includes both a command-line interface and a Fyne-based desktop GUI for experimenting with factorization methods, encryption, and decryption.
 
 This project is intended for learning and demonstration. It is not production cryptography software.
 
