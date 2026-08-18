@@ -11,6 +11,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 )
@@ -83,6 +84,7 @@ func LogsScreen(w fyne.Window, appController *controller.Controller) (fyne.Canva
 		widget.NewButton("Export CSV", func() {
 			file, err := os.Create("output.csv")
 			if err != nil {
+				dialog.ShowInformation("CSV ERROR", "CSV Save Failed", w)
 				log.Fatal(err)
 			}
 			defer file.Close()
@@ -146,6 +148,7 @@ func LogsScreen(w fyne.Window, appController *controller.Controller) (fyne.Canva
 			err = os.WriteFile("output.json", jsonData, 0644)
 			if err != nil {
 				fmt.Println("Error writing file:", err)
+				dialog.ShowInformation("JSON ERROR", "JSON Save Failed", w)
 				return
 			}
 
