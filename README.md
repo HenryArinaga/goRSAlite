@@ -123,12 +123,7 @@ The first stable release target is:
 v1.0.0
 ```
 
-Suggested release commands:
 
-```bash
-git tag -a v1.0.0 -m "Release v1.0.0"
-git push origin v1.0.0
-```
 
 ## License
 
